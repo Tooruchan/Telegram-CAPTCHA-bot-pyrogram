@@ -67,12 +67,12 @@ def challenge_user(bot, update):
     try:
         bot.restrict_chat_member(msg.chat.id, msg.from_user.id)
     except TelegramError:
-        # 如果bot返回错误（群管理员没有给bot权限或者是其其他他的原因）则什么都不干
+        # 如果bot返回错误（群管理员没有给bot权限或者是其其他他的原因）则提示权限不足。
         # Add a message to remind admins and creators that the bot isn't permitted to restrict member.
         bot.send_message(
             chat_id=msg.chat.id,
             text=
-            '请在群中将本bot设置为管理员，以便能够对入群的用户进行验证。\n\nPlease add this bot as admin, or it can\'t verifye new users.'
+            '请在群中将本bot设置为管理员，以便能够对入群的用户进行验证。\n\nPlease add this bot as admin, or it can\'t verify new users.'
         )
         return None
 
@@ -261,7 +261,6 @@ def handle_challenge_response(bot, update):
         # This my happen when the bot is deop-ed after the user join
         # and before the user click the button
         # TODO: design messages for this occation
-        bot.send_message(chat_id=chat, text='在给用户解除限制的过程中发生了错误，请管理员手动解除限制。')
         pass
 
     bot.answer_callback_query(callback_query_id=query['id'])
@@ -294,6 +293,13 @@ def handle_challenge_response(bot, update):
                     chat_id=chat,
                     message_id=bot_msg,
                     reply_markup=None)
+                bot.restrict_chat_member(
+                    chat,
+                    target,
+                    can_send_messages=False,
+                    can_send_media_messages=False,
+                    can_send_other_messages=False,
+                    can_add_web_page_previews=False)
             except TelegramError:
                 # it is very possible that the message has been deleted
                 # so assume the case has been dealt by group admins, simply ignore it
