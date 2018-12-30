@@ -8,6 +8,8 @@ A bot running on Telegram which will send CAPTCHA to verify if the new member is
 
 修改者：Telegram [@tooruchan](https://t.me/tooruchan)
 
+Bot实例: @toorucaptchabot
+
 ## 安装与使用
 
 1. 请先向 [@BotFather](https://t.me/botfather) 申请一个 Bot API Token
