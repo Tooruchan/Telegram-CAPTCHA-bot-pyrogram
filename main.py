@@ -15,6 +15,7 @@ logging.basicConfig(
 config, config_lock = dict(), threading.Lock()
 updater = None
 dispatcher = None
+channel = None
 # Key: chat_id + '|' + user_id + '|' + msg_id
 # Value: (challenge object, event object)
 current_challenges, cch_lock = dict(), threading.Lock()
@@ -34,7 +35,7 @@ def load_config():
 
 def save_config():
     config_lock.acquire()
-    with open('config.json', 'w', encoding='utf-8') as f:
+    with open('config.json', 'w') as f:
         json.dump(config, f, indent=4)
     config_lock.release()
 
@@ -67,7 +68,7 @@ def challenge_user(bot, update):
     try:
         bot.restrict_chat_member(msg.chat.id, msg.from_user.id)
     except TelegramError:
-        # 如果bot返回错误（群管理员没有给bot权限或者是其其他他的原因）则提示权限不足。
+        # 如果bot返回错误（群管理员没有给bot权限或者是其其他他的原因）则什么都不干
         # Add a message to remind admins and creators that the bot isn't permitted to restrict member.
         bot.send_message(
             chat_id=msg.chat.id,
@@ -212,6 +213,10 @@ def handle_challenge_response(bot, update):
                 chat_id=chat,
                 message_id=bot_msg,
                 reply_mark=None)
+            bot.send_message(
+                chat_id=int(channel),
+                text='User ' + str(target) +
+                ' has passed the captcha by admins.\nGroup id:' + str(chat))
         else:  # query['data'] == '-'
             try:
                 bot.kick_chat_member(chat, target)
@@ -225,6 +230,10 @@ def handle_challenge_response(bot, update):
                 chat_id=chat,
                 message_id=bot_msg,
                 reply_mark=None)
+            bot.send_message(
+                chat_id=int(channel),
+                text='User ' + str(target) +
+                ' has failed the captcha by admins.\nGroup id:' + str(chat))
 
         bot.answer_callback_query(callback_query_id=query['id'])
 
@@ -276,6 +285,10 @@ def handle_challenge_response(bot, update):
             chat_id=chat,
             message_id=bot_msg,
             reply_mark=None)
+        bot.send_message(
+            chat_id=int(channel),
+            text='User ' + str(target) + ' has passed the captcha \nGroup id:'
+            + str(chat))
     else:
         # 如果回答错误，进入严格模式和非严格模式的判断。
         if group_config["use_strict_mode"] == False:
@@ -285,6 +298,10 @@ def handle_challenge_response(bot, update):
                 chat_id=chat,
                 message_id=bot_msg,
                 reply_mark=None)
+            bot.send_message(
+                chat_id=int(channel),
+                text='User ' + str(target) +
+                ' has mercyfully passed the captcha\nGroup id:' + str(chat))
         else:
             # 启用了严格模式
             try:
@@ -300,6 +317,11 @@ def handle_challenge_response(bot, update):
                     can_send_media_messages=False,
                     can_send_other_messages=False,
                     can_add_web_page_previews=False)
+                bot.send_message(
+                    chat_id=int(channel),
+                    text='User ' + str(target) +
+                    ' has failed the captcha\nGroup id:' + str(chat) +
+                    ' \nreason:Wrong answer.')
             except TelegramError:
                 # it is very possible that the message has been deleted
                 # so assume the case has been dealt by group admins, simply ignore it
@@ -307,6 +329,9 @@ def handle_challenge_response(bot, update):
 
             if group_config['challenge_timeout_action'] == 'ban':
                 bot.kick_chat_member(chat, user)
+            elif group_config['challenge_timeout_action'] == 'kick':
+                bot.kick_chat_member(chat, user)
+                bot.unban_chat_member(chat, user)
             else:  # restrict
                 # assume that the user is already restricted (when joining the group)
                 pass
@@ -327,10 +352,11 @@ def handle_challenge_response(bot, update):
 
 
 def main():
-    global updater, dispatcher
+    global updater, dispatcher, channel
 
     load_config()
     updater = Updater(config['token'])
+    channel = config['channel']
     dispatcher = updater.dispatcher
 
     challenge_handler = MessageHandler(Filters.status_update.new_chat_members,
