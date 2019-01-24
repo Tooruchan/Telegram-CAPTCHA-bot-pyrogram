@@ -58,9 +58,18 @@ def challenge_user(bot, update):
         if bot.get_me() in msg.new_chat_members:
             config_lock.acquire()
             group_config = config.get(str(msg.chat.id), config['*'])
-            bot.send_message(
-                chat_id=msg.chat.id,
-                text=group_config['msg_self_introduction'])
+            try:
+                bot.send_message(
+                    chat_id=msg.chat.id,
+                    text=group_config['msg_self_introduction'])
+                bot.send_message(
+                    chat_id=int(channel),
+                    text=config['msg_into_group'].format(botid=str(bot.get_me().id),groupid=str(msg.chat.id),
+                    grouptitle=str(msg.chat.title)),
+                    parse_mode='Markdown'
+                )
+            except TelegramError:
+                return None
             config_lock.release()
         return None
 
@@ -70,11 +79,6 @@ def challenge_user(bot, update):
     except TelegramError:
         # 如果bot返回错误（群管理员没有给bot权限或者是其其他他的原因）则什么都不干
         # Add a message to remind admins and creators that the bot isn't permitted to restrict member.
-        bot.send_message(
-            chat_id=msg.chat.id,
-            text=
-            '请在群中将本bot设置为管理员，以便能够对入群的用户进行验证。\n\nPlease add this bot as admin, or it can\'t verify new users.'
-        )
         return None
 
     config_lock.acquire()
@@ -165,6 +169,7 @@ def handle_challenge_response(bot, update):
     user_ans = query['data']
 
     chat = update.effective_chat.id
+    title = update.effective_chat.title
     user = update.effective_user.id
     username = update.effective_user.name
     bot_msg = update.effective_message.message_id
@@ -218,7 +223,7 @@ def handle_challenge_response(bot, update):
                 reply_mark=None)
             bot.send_message(
                 chat_id=int(channel),
-                text=config['msg_passed_admin'].format(botid=str(bot.get_me().id),targetuser=str(target),groupid=str(chat)),
+                text=config['msg_passed_admin'].format(botid=str(bot.get_me().id),targetuser=str(target),groupid=str(chat),grouptitle=str(title)),
                 parse_mode='Markdown')
         else:  # query['data'] == '-'
             try:
@@ -235,7 +240,7 @@ def handle_challenge_response(bot, update):
                 reply_mark=None)
             bot.send_message(
                 chat_id=int(channel),
-                text=config['msg_failed_admin'].format(botid=str(bot.get_me().id),targetuser=str(target),groupid=str(chat)),
+                text=config['msg_failed_admin'].format(botid=str(bot.get_me().id),targetuser=str(target),groupid=str(chat),grouptitle=str(title)),
                 parse_mode='Markdown')
 
         bot.answer_callback_query(callback_query_id=query['id'])
@@ -290,7 +295,7 @@ def handle_challenge_response(bot, update):
             reply_mark=None)
         bot.send_message(
             chat_id=int(channel),
-            text=config['msg_passed_answer'].format(botid=str(bot.get_me().id),targetuser=str(target),groupid=str(chat)),
+            text=config['msg_passed_answer'].format(botid=str(bot.get_me().id),targetuser=str(target),groupid=str(chat),grouptitle=str(title)),
             parse_mode='Markdown')
     else:
         # 如果回答错误，进入严格模式和非严格模式的判断。
@@ -303,7 +308,7 @@ def handle_challenge_response(bot, update):
                 reply_mark=None)
             bot.send_message(
                 chat_id=int(channel),
-                text=config['msg_passed_mercy'].format(botid=str(bot.get_me().id),targetuser=str(target),groupid=str(chat)),
+                text=config['msg_passed_mercy'].format(botid=str(bot.get_me().id),targetuser=str(target),groupid=str(chat),grouptitle=str(title)),
                 parse_mode='Markdown')
         else:
             # 启用了严格模式
@@ -322,7 +327,7 @@ def handle_challenge_response(bot, update):
                     can_add_web_page_previews=False)
                 bot.send_message(
                     chat_id=int(channel),
-                    text=config['msg_failed_answer'].format(botid=str(bot.get_me().id),targetuser=str(target),groupid=str(chat)),
+                    text=config['msg_failed_answer'].format(botid=str(bot.get_me().id),targetuser=str(target),groupid=str(chat),grouptitle=str(title)),
                     parse_mode='Markdown')
             except TelegramError:
                 # it is very possible that the message has been deleted
