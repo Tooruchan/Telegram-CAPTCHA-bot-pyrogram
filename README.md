@@ -13,9 +13,9 @@ Bot实例: [@toorucaptchabot](https://t.me/toorucaptchabot)
 ## 安装与使用
 
 1. 请先向 [@BotFather](https://t.me/botfather) 申请一个 Bot API Token
-2. 在服务器上安装 python-telegram-bot: 
-`pip3 install python-telegram-bot --upgrade`
-3. 
+2. 在 [Telegram API](https://core.telegram.org/api/obtaining_api_id) 申请key
+3. 在服务器上安装 pyrogram: 
+`pip3 install -U https://github.com/pyrogram/pyrogram/archive/asyncio.zip`
 ``` 
 git clone https://github.com/Tooruchan/Telegram-CAPTCHA-bot 
 cd Telegram-CAPTCHA-bot
