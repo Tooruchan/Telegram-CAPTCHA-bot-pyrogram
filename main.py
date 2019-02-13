@@ -214,7 +214,6 @@ def _update(app):
         timeout_event = _Timer(
             challenge_timeout(client, message.chat.id, message.from_user.id, reply_message.message_id),
             timeout=group_config['challenge_timeout'])
-        print("Call")
         _cch_lock.acquire()
         _current_challenges['{chat}|{msg}'.format(
             chat=message.chat.id,
@@ -222,7 +221,6 @@ def _update(app):
         _cch_lock.release()
 
     async def challenge_timeout(client: Client, chat_id, from_id, reply_id):
-        print("Test")
         global _current_challenges
         group_config = _config.get(str(chat_id), _config['*'])
 
