@@ -14,13 +14,18 @@ Bot实例: [@toorucaptchabot](https://t.me/toorucaptchabot)
 
 1. 请先向 [@BotFather](https://t.me/botfather) 申请一个 Bot API Token
 2. 在 [Telegram API](https://core.telegram.org/api/obtaining_api_id) 申请key
-3. 在服务器上安装 pyrogram: 
-`pip3 install -U https://github.com/pyrogram/pyrogram/archive/asyncio.zip`
+3. 在服务器上安装 pyrogram 以及 tgcrypto: 
+```
+#若未安装pip3，请先安装 python3-pip
+apt install python3-pip
+pip3 install -U https://github.com/pyrogram/pyrogram/archive/asyncio.zip
+pip3 install --upgrade tgcrypto
+```
 ``` 
 git clone https://github.com/Tooruchan/Telegram-CAPTCHA-bot 
 cd Telegram-CAPTCHA-bot
 ```
-4. 将 config.json 里的 token 字符串修改为你在 [@BotFather](https://t.me/botfather) 获取到的 API Token，你也可以对 config.json 里的内容酌情修改。
+4. 将 config.json 里的 token 字符串修改为你在 [@BotFather](https://t.me/botfather) 获取到的 API Token，API hash 和 API id修改为你在步骤2中获得的两串代码，你也可以对 config.json 里的内容酌情修改。
 5. 使用 `python3 main.py` 运行这个 bot,或者在 `/etc/systemd/system/ `下新建一个 .service 文件，使用 systemd 控制这个bot的运行，配置文件示例如下所示:
 ```
 [Unit]
