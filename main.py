@@ -218,7 +218,7 @@ def _update(app):
                     _me: User = await client.get_me()
                     await client.send_message(
                         int(_channel),
-                        _config["msg_passed_answer"].format(
+                        _config["msg_failed_answer"].format(
                             botid=str(_me.id),
                             targetuser=str(target),
                             groupid=str(chat_id),
@@ -229,19 +229,19 @@ def _update(app):
                 except ChatAdminRequired:
                     return
 
-            if group_config["challenge_timeout_action"] == "ban":
-                await client.kick_chat_member(chat_id, user_id)
-            elif group_config["challenge_timeout_action"] == "kick":
-                await client.kick_chat_member(chat_id, user_id)
-                await client.unban_chat_member(chat_id, user_id)
-            else:
-                pass
+                if group_config["challenge_timeout_action"] == "ban":
+                    await client.kick_chat_member(chat_id, user_id)
+                elif group_config["challenge_timeout_action"] == "kick":
+                    await client.kick_chat_member(chat_id, user_id)
+                    await client.unban_chat_member(chat_id, user_id)
+                else:
+                    pass
 
-            if group_config["delete_failed_challenge"]:
-                _Timer(
-                    client.delete_messages(chat_id, msg_id),
-                    group_config["delete_failed_challenge_interval"],
-                )
+                if group_config["delete_failed_challenge"]:
+                    _Timer(
+                        client.delete_messages(chat_id, msg_id),
+                        group_config["delete_failed_challenge_interval"],
+                    )
         if group_config["delete_passed_challenge"]:
             _Timer(
                 client.delete_messages(chat_id, msg_id),
