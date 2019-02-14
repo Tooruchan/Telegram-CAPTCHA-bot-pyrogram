@@ -6,7 +6,7 @@ A bot running on Telegram which will send CAPTCHA to verify if the new member is
 
 原始项目地址: https://github.com/lziad/Telegram-CAPTCHA-bot
 
-修改者：Telegram [@tooruchan](https://t.me/tooruchan)
+修改者：Telegram [@tooruchan](https://t.me/tooruchan) Rsplwe
 
 Bot实例: [@toorucaptchabot](https://t.me/toorucaptchabot)
 
