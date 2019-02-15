@@ -3,6 +3,7 @@
   "api_id": 0,
   "api_hash": "",
   "channel": "",
+  "msg_start_command": "",
   "msg_passed_answer": "OPBot: `{botid}`\n用户 ID: `{targetuser}` 通过了验证.\n群组 ID: `{groupid}`\n群名: `{grouptitle}`",
   "msg_passed_mercy": "OPBot: `{botid}`\n用户 ID: `{targetuser}` 回答错了问题，但仍然通过了验证.\n群组 ID: `{groupid}`\n群名: `{grouptitle}`",
   "msg_passed_admin": "OPBot: `{botid}`\n用户 ID: `{targetuser}` 的验证已被管理员人工通过.\n群组 ID: `{groupid}`\n群名: `{grouptitle}`",
@@ -28,6 +29,7 @@
     "delete_passed_challenge": true,
     "delete_passed_challenge_interval": 30,
     "delete_failed_challenge": true,
+    "delete_failed_challenge_interval": 30,
     "use_strict_mode": true
   }
 }
