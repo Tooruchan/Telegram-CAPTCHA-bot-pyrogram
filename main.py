@@ -16,6 +16,7 @@ from pyrogram.api.errors.exceptions import *
 
 _app: Client = None
 _channel: str = None
+_start_message: str = None
 # _challenge_scheduler = sched.scheduler(time, sleep)
 _current_challenges = dict()
 _cch_lock = threading.Lock()
@@ -52,6 +53,14 @@ def save_config():
 
 
 def _update(app):
+    @app.on_message(Filters.command("ping") & Filters.private)
+    async def ping_command(client: Client, message: Message):
+        await message.reply("poi~")
+
+    @app.on_message(Filters.command("start") & Filters.private)
+    async def start_command(client: Client, message: Message):
+        await message.reply(_start_message)
+
     @app.on_callback_query()
     async def challenge_callback(client: Client, callback_query: CallbackQuery):
         query_data = str(callback_query.data, encoding="utf-8")
@@ -354,12 +363,13 @@ def _update(app):
 
 
 def _main():
-    global _app, _channel
+    global _app, _channel, _start_message
     load_config()
     _api_id = _config["api_id"]
     _api_hash = _config["api_hash"]
     _token = _config["token"]
     _channel = _config["channel"]
+    _start_message = _config["msg_start_message"]
     _app = Client(_token, api_id=_api_id, api_hash=_api_hash)
     _update(_app)
     _app.run()
