@@ -369,7 +369,7 @@ def _main():
     _api_hash = _config["api_hash"]
     _token = _config["token"]
     _channel = _config["channel"]
-    _start_message = _config["msg_start_message"]
+    _start_message = _config["msg_start_command"]
     _app = Client(_token, api_id=_api_id, api_hash=_api_hash)
     _update(_app)
     _app.run()
