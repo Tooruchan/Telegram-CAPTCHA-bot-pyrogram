@@ -48,7 +48,7 @@ WantedBy=multi-user.target
 ```
 6. 将本bot加入一个群组，并给予封禁用户的权限，即可开始使用
 ## 测试群组
-[@tooruchan_group_bot](https://t.me/tooruchan_group_bot)
+[@toorucaptchabot](https://t.me/toorucaptchabot)
 
 ## 开源协议
 MIT
