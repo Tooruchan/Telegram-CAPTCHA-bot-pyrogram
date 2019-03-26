@@ -60,6 +60,28 @@ def _update(app):
     @app.on_message(Filters.command("start") & Filters.private)
     async def start_command(client: Client, message: Message):
         await message.reply(_start_message)
+    
+    @app.on_message(Filters.command("leave") & Filters.private)
+    async def leave_command(client: Client, message: Message):
+        chat_id = message.text.split()[-1]
+        if message.from_user.id == _config["manage_user"]:
+            try:
+                await client.send_message(int(chat_id),_config["msg_leave_msg"])
+                await client.leave_chat(int(chat_id),True)
+            except:
+                await message.reply("指令出错了！可能是bot不在参数所在群里。")
+            else:
+                await message.reply("已离开群组: `"+chat_id+"`",parse_mode="Markdown")
+                _me: User = await client.get_me()
+                await client.send_message(
+                    int(_channel),
+                    _config["msg_leave_group"].format(
+                        botid=str(_me.id),
+                        groupid=chat_id,
+                    ),
+                    parse_mode="Markdown")
+        else:
+            pass
 
     @app.on_callback_query()
     async def challenge_callback(client: Client, callback_query: CallbackQuery):
@@ -369,7 +391,7 @@ def _main():
     _api_hash = _config["api_hash"]
     _token = _config["token"]
     _channel = _config["channel"]
-    _start_message = _config["msg_start_command"]
+    _start_message = _config["msg_start_message"]
     _app = Client(_token, api_id=_api_id, api_hash=_api_hash)
     _update(_app)
     _app.run()

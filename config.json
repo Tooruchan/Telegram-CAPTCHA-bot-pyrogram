@@ -3,7 +3,8 @@
   "api_id": 0,
   "api_hash": "",
   "channel": "",
-  "msg_start_command": "",
+  "manage_user": 0,
+  "msg_start_message": "喵？",
   "msg_passed_answer": "OPBot: `{botid}`\n用户 ID: `{targetuser}` 通过了验证.\n群组 ID: `{groupid}`\n群名: `{grouptitle}`",
   "msg_passed_mercy": "OPBot: `{botid}`\n用户 ID: `{targetuser}` 回答错了问题，但仍然通过了验证.\n群组 ID: `{groupid}`\n群名: `{grouptitle}`",
   "msg_passed_admin": "OPBot: `{botid}`\n用户 ID: `{targetuser}` 的验证已被管理员人工通过.\n群组 ID: `{groupid}`\n群名: `{grouptitle}`",
@@ -11,6 +12,8 @@
   "msg_failed_timeout": "OPBot: `{botid}`\n用户 ID: `{targetuser}` 的验证未能通过.\n原因: 超时.\n群组 ID: `{groupid}`\n群名: `{grouptitle}`",
   "msg_failed_admin": "OPBot: `{botid}`\n用户 ID: `{targetuser}` 的验证已被管理员人工拒绝.\n群组 ID: `{groupid}`",
   "msg_into_group": "OPBot: `{botid}`\n已被加入群组 ID: `{groupid}`\n群名: `{grouptitle}` 中",
+  "msg_leave_group": "基于Term of Service, OPBot: `{botid}` \n离开了群组: `{groupid}`",
+  "msg_leave_msg": "根据 Term of Service 所要求的, 本 Bot 无法对该群组提供服务, Bot 将会在发送完这句话后离开群组。",
   "*": {
     "msg_self_introduction": "大家好，感谢使用本机器人，它可以有效而简便地对新入群用户进行验证。\n如果你需要使用它对新入群的用户验证，请设其为管理员并且赋予其封禁用户的权限。\n本bot的验证方式为生成一道三位数以下的数学运算题，用户通过inline按键回答。\n注意，本bot并不允许在下列类型的群组中使用:\n1.含有违反Telegram官方规定禁止内容的群组\n2.使用了拉人等非法Spam服务的群组\n3.讨论灰色或者是黑色产业相关群组\n4.使用本bot的入群验证来获得利益的群组\n\n本bot项目地址:\nhttps://github.com/Tooruchan/Telegram-CAPTCHA-bot",
     "msg_challenge_not_for_you": "这次验证并不针对您",
@@ -29,7 +32,7 @@
     "delete_passed_challenge": true,
     "delete_passed_challenge_interval": 30,
     "delete_failed_challenge": true,
-    "delete_failed_challenge_interval": 30,
+    "delete_failed_challenge_interval": 15,
     "use_strict_mode": true
   }
 }
