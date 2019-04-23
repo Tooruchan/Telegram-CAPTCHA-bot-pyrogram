@@ -2,7 +2,7 @@
 
 一个用于验证新成员是不是真人的bot。
 
-![](https://img.shields.io/badge/license-MIT-%23373737.svg) ![](https://img.shields.io/badge/python-3.5%20%7C%203.6%20%7C%203.7-blue.svg) ![](https://img.shields.io/badge/Pyrogram-v0.11.0.asyncio-green.svg)
+![](https://img.shields.io/badge/license-MIT-%23373737.svg) ![](https://img.shields.io/badge/python-3.5%20%7C%203.6%20%7C%203.7-blue.svg) ![](https://img.shields.io/badge/Pyrogram-asyncio-green.svg)
 
 A bot running on Telegram which will send CAPTCHA to verify if the new member is a human.
 
@@ -20,7 +20,7 @@ Bot实例: [@toorucaptchabot](https://t.me/toorucaptchabot)
 ```
 #若未安装pip3，请先安装 python3-pip
 apt install python3-pip
-pip3 install -U https://github.com/Tooruchan/Telegram-CAPTCHA-bot/raw/master/v0.11.1.asyncio.zip
+pip3 install -U pip3 install -U https://github.com/pyrogram/pyrogram/archive/asyncio.zip
 pip3 install --upgrade tgcrypto
 ```
 ``` 
