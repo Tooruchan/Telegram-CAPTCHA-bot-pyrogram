@@ -12,7 +12,7 @@ from pyrogram import (
     InlineKeyboardMarkup,
     CallbackQuery,
 )
-from pyrogram.api.errors.exceptions import *
+from pyrogram import errors
 
 _app: Client = None
 _channel: str = None
