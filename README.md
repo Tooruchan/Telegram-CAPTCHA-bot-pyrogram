@@ -20,7 +20,7 @@ Bot实例: [@toorucaptchabot](https://t.me/toorucaptchabot)
 ```
 #若未安装pip3，请先安装 python3-pip
 apt install python3-pip
-pip3 install -U https://github.com/pyrogram/pyrogram/archive/asyncio.zip
+pip3 install -U https://github.com/Tooruchan/Telegram-CAPTCHA-bot/raw/master/v0.11.1.asyncio.zip
 pip3 install --upgrade tgcrypto
 ```
 ``` 
