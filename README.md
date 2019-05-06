@@ -49,10 +49,11 @@ StartLimitInterval=400
 WantedBy=multi-user.target
 ```
 6. 将本bot加入一个群组，并给予封禁用户的权限，即可开始使用
-## 测试机器人
+## 实例
 [@toorucaptchabot](https://t.me/toorucaptchabot)  
 本项目在 Python 3.6.7 和 pyrogram v0.12.0.asyncio 上测试通过
-
+[@AffyunWatchCatBot](https://t.me/AffyunWatchCatBot)  
+(环境为 Python 3.7.3 和 pyrogram v0.12.0.asyncio)
 ## 开源协议
 本项目使用 MIT 协议开源
 
