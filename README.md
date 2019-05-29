@@ -2,7 +2,7 @@
 
 一个用于验证新成员是不是真人的bot。
 
-![](https://img.shields.io/badge/license-MIT-%23373737.svg) ![](https://img.shields.io/badge/python-3.6%20%7C%203.7-blue.svg) ![](https://img.shields.io/badge/Pyrogram-asyncio-green.svg)
+![](https://img.shields.io/badge/license-MIT-%23373737.svg) ![https://python.org](https://img.shields.io/badge/python-3.6%20%7C%203.7-blue.svg) ![https://github.com/pyrogram/pyrogram/](https://img.shields.io/badge/Pyrogram-asyncio-green.svg)
 
 A bot running on Telegram which will send CAPTCHA to verify if the new member is a human.
 
@@ -51,7 +51,7 @@ WantedBy=multi-user.target
 6. 将本bot加入一个群组，并给予封禁用户的权限，即可开始使用
 ## 实例
 [@toorucaptchabot](https://t.me/toorucaptchabot)  
-本项目在 Python 3.6.7 和 pyrogram v0.12.0.asyncio 上测试通过
+本项目在 Python 3.6.7 和 pyrogram v0.12.0.asyncio 上测试通过  
 [@AffyunWatchCatBot](https://t.me/AffyunWatchCatBot)  
 (环境为 Python 3.7.3 和 pyrogram v0.12.0.asyncio)
 ## 开源协议
