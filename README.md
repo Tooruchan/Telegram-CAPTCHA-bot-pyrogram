@@ -53,7 +53,7 @@ WantedBy=multi-user.target
 [@toorucaptchabot](https://t.me/toorucaptchabot)  
 本项目在 Python 3.6.7 和 pyrogram v0.12.0.asyncio 上测试通过  
 [@AffyunWatchCatBot](https://t.me/AffyunWatchCatBot)  
-(环境为 Python 3.7.3 和 pyrogram v0.12.0.asyncio)
+(环境为 Python 3.7.3 和 pyrogram v0.12.0.asyncio)  
 [@JustCaptchaBot](https://t.me/JustCaptchaBot)  
 (环境为 PyPy 3.6 + pyrogram v0.13.0.asyncio)  
 ## 开源协议
