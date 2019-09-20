@@ -28,26 +28,7 @@ git clone https://github.com/Tooruchan/Telegram-CAPTCHA-bot
 cd Telegram-CAPTCHA-bot
 ```
 4. 将 config.json 里的 token 字符串修改为你在 [@BotFather](https://t.me/botfather) 获取到的 API Token，API hash 和 API id 修改为你在步骤2中获得的两串内容，其中 API ID 为数字，而 API Hash 为一组字符，你也可以对 config.json 里的内容酌情修改。
-5. 使用 `python3 main.py` 运行这个 bot,或者在 `/etc/systemd/system/ `下新建一个 .service 文件，使用 systemd 控制这个bot的运行，配置文件示例如下所示:
-```
-[Unit]
-Description=YJSNPI 114514 service
-After=network-online.target
-Wants=network-online.target
-
-[Service]
-Type=simple
-WorkingDirectory=Place your bot directory here
-ExecStart=/usr/bin/python3 /Your/bot/directory/main.py
-Restart=always
-PrivateTmp=True
-KillSignal=SIGINT
-TimeoutStopSec=10s
-StartLimitInterval=400
-
-[Install]
-WantedBy=multi-user.target
-```
+5. 使用 `python3 main.py` 运行这个 bot,或者在 `/etc/systemd/system/ `下新建一个 .service 文件，使用 systemd 控制这个bot的运行，配置文件示例请参考本项目目录下的 `example.service` 文件进行修改。
 6. 将本bot加入一个群组，并给予封禁用户的权限，即可开始使用
 ## 实例
 [@toorucaptchabot](https://t.me/toorucaptchabot)  
@@ -57,7 +38,7 @@ WantedBy=multi-user.target
 [@JustCaptchaBot](https://t.me/JustCaptchaBot)  
 (环境为 PyPy 3.6 + pyrogram v0.13.0.asyncio)  
 ## 开源协议
-本项目使用 MIT 协议开源
+本项目使用 MIT 协议开源，使用请注明本项目地址。
 
 
 
