@@ -194,6 +194,7 @@ def _update(app):
                 can_send_messages=True,
                 can_send_media_messages=True,
                 can_add_web_page_previews=True,
+                can_send_polls=True
             )
         except ChatAdminRequired:
             pass
@@ -395,7 +396,7 @@ def _main():
     _token = _config["token"]
     _channel = _config["channel"]
     _start_message = _config["msg_start_message"]
-    _app = Client(_token, api_id=_api_id, api_hash=_api_hash)
+    _app = Client("bot",bot_token=_token, api_id=_api_id, api_hash=_api_hash)
     _update(_app)
     _app.run()
 
