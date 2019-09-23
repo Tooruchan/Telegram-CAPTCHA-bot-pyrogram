@@ -8,6 +8,8 @@ A bot running on Telegram which will send CAPTCHA to verify if the new member is
 
 基于[原始项目](https://github.com/lziad/Telegram-CAPTCHA-bot)重制  
 
+Remaked and forked based on [Original Repository](https://github.com/lziad/Telegram-CAPTCHA-bot)
+
 修改者：Telegram [@tooruchan](https://t.me/tooruchan) Rsplwe
 
 Bot实例: [@toorucaptchabot](https://t.me/toorucaptchabot)
