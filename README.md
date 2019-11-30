@@ -19,11 +19,12 @@ Bot实例: [@toorucaptchabot](https://t.me/toorucaptchabot)
 1. 请先向 [@BotFather](https://t.me/botfather) 申请一个 Bot API Token  
 > 你申请到的机器人会在你的 Telegram 账号所在数据中心上运行（即申请机器人的账号A位于DC5(新加坡)，则申请到的机器人也将会在DC5上运行  
 2. 在 [Obtaining Telegram API ID](https://core.telegram.org/api/obtaining_api_id) 申请 API ID 与 API Hash
-3. 在服务器上安装 pyrogram 以及 tgcrypto: 
+3. 在服务器上安装 pyrogram 以及 tgcrypto（以 Ubuntu 18.04 LTS 为例）: 
 ```
-#若未安装pip3，请先安装 python3-pip
+# 若未安装pip3，请先安装 python3-pip
 apt install python3-pip
-pip3 install -U https://github.com/pyrogram/pyrogram/archive/asyncio.zip
+pip3 install -U https://github.com/Tooruchan/Telegram-CAPTCHA-bot/raw/master/pyrogram-asyncio.zip
+# 由于 pyrogram 经常更新伴随着大改语法，所以在这里直接使用最适合当前版本的 pyrogram 版本，以免部署时发生意外情况。
 pip3 install --upgrade tgcrypto
 ```
 ``` 
