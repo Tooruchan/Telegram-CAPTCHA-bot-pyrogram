@@ -11,8 +11,10 @@ from pyrogram import (
     InlineKeyboardButton,
     InlineKeyboardMarkup,
     CallbackQuery,
+    ChatPermissions
 )
 from pyrogram import errors
+from pyrogram.errors import ChatAdminRequired,ChannelPrivate
 
 _app: Client = None
 _channel: str = None
@@ -121,12 +123,12 @@ def _update(app):
                 try:
                     await client.restrict_chat_member(
                         chat_id,
-                        target,
+                        target,permissions=ChatPermissions(
                         can_send_other_messages=True,
                         can_send_messages=True,
                         can_send_media_messages=True,
                         can_add_web_page_previews=True,
-                    )
+                    ))
                 except ChatAdminRequired:
                     await client.answer_callback_query(
                         query_id, group_config["msg_bot_no_permission"])
@@ -188,12 +190,12 @@ def _update(app):
         timeout_event.stop()
         try:
             await client.restrict_chat_member(chat_id,
-                                              target,
+                                              target,permissions=ChatPermissions(
                                               can_send_other_messages=True,
                                               can_send_messages=True,
                                               can_send_media_messages=True,
                                               can_add_web_page_previews=True,
-                                              can_send_polls=True)
+                                              can_send_polls=True))
         except ChatAdminRequired:
             pass
 
@@ -300,7 +302,12 @@ def _update(app):
             return
         try:
             await client.restrict_chat_member(chat_id=message.chat.id,
-                                              user_id=target.id)
+                                              user_id=target.id,permissions=ChatPermissions(
+                                              can_send_other_messages=False,
+                                              can_send_messages=False,
+                                              can_send_media_messages=False,
+                                              can_add_web_page_previews=False,
+                                              can_send_polls=False))
         except ChatAdminRequired:
             return
         group_config = _config.get(str(message.chat.id), _config["*"])
