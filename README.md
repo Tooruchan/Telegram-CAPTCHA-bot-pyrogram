@@ -37,7 +37,7 @@ cd Telegram-CAPTCHA-bot
 由于一个已知无解的严重 Bug， Bot 在运行一周至13天左右的时间可能会由于线程冲突导致整个 Bot 死掉，如果需要在多个（10个以上）的群组内部署本 Bot 请考虑在crontab等地方设置定期重启。  
 ## 实例
 [@toorucaptchabot](https://t.me/toorucaptchabot)  
-本项目在 Python 3.6.7 和 pyrogram v0.12.0.asyncio 上测试通过  
+本项目在 Python 3.6.8 和 pyrogram v0.16.0.asyncio 上测试通过  
 [@AffyunWatchCatBot](https://t.me/AffyunWatchCatBot)  
 (环境为 Python 3.7.3 和 pyrogram v0.12.0.asyncio)  
 [@JustCaptchaBot](https://t.me/JustCaptchaBot)  
