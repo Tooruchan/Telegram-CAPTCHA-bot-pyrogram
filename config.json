@@ -18,7 +18,7 @@
   "*": {
     "msg_self_introduction": "大家好，感谢使用本机器人，它可以有效而简便地对新入群用户进行验证。\n如果你需要使用它对新入群的用户验证，请设其为管理员并且赋予其封禁用户的权限。\n本bot的验证方式为生成一道三位数以下的数学运算题，用户通过inline按键回答。\n使用协议: https://github.com/Tooruchan/Telegram-CAPTCHA-bot/blob/master/ToS.md \n隐私协议: https://github.com/Tooruchan/Telegram-CAPTCHA-bot/blob/master/PRIVACY.md \n\n 本项目开源主页:https://github.com/Tooruchan/Telegram-CAPTCHA-bot",
     "msg_challenge_not_for_you": "这次验证并不针对您",
-    "msg_challenge": "您好，本群开启了验证功能，请在 {timeout} 秒内点击下面的按钮回答这个问题：\n{challenge}",
+    "msg_challenge": "对于用户 [{target}](tg://user?id={target_id}) :\n您好，本群开启了验证功能，请在 {timeout} 秒内点击下面的按钮回答这个问题：\n{challenge}",
     "msg_challenge_passed": "您已通过验证，欢迎加入本群！\n如果仍然无法发言，请重启 Telegram 客户端。",
     "msg_challenge_mercy_passed": "虽然您答错了问题，但我们仍然认为您不是可恨的广告机器人，欢迎加入本群！\n如果仍然无法发言，请重启 Telegram 客户端。",
     "msg_challenge_failed": "抱歉，您没有通过验证，如需解封请私聊本群群管。",
