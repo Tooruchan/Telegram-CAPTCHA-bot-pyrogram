@@ -13,7 +13,6 @@ from pyrogram import (
     CallbackQuery,
     ChatPermissions
 )
-from pyrogram import errors
 from pyrogram.errors import ChatAdminRequired,ChannelPrivate
 
 _app: Client = None
@@ -104,7 +103,7 @@ def _update(app):
                     admin.user.id == user_id and
                 (admin.status == "creator"
                  or admin.permissions.can_restrict_members)
-                    for admin in admins.chat_members
+                    for admin in admins
             ]):
                 await client.answer_callback_query(
                     query_id, group_config["msg_permission_denied"])
