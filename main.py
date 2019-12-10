@@ -102,7 +102,7 @@ def _update(app):
             if not any([
                     admin.user.id == user_id and
                 (admin.status == "creator"
-                 or admin.permissions.can_restrict_members)
+                 or admin.can_restrict_members)
                     for admin in admins
             ]):
                 await client.answer_callback_query(
