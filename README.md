@@ -25,6 +25,9 @@ Bot实例: [@toorucaptchabot](https://t.me/toorucaptchabot)
 apt install python3-pip
 pip3 install -U https://github.com/Tooruchan/Telegram-CAPTCHA-bot/raw/master/pyrogram-asyncio.zip
 # 由于 pyrogram 经常更新伴随着大改语法，所以在这里直接使用最适合当前版本的 pyrogram 版本，以免部署时发生意外情况。
+# pyrogram-asyncio.zip 的校验：
+# SHA1: E57BDF355E2B3CA04C6934BB94254ABA7A45A5AF
+# CRC32: E4016E8D
 pip3 install --upgrade tgcrypto
 ```
 ``` 
