@@ -31,17 +31,23 @@ pip3 install --upgrade tgcrypto
 git clone https://github.com/Tooruchan/Telegram-CAPTCHA-bot 
 cd Telegram-CAPTCHA-bot
 ```
+
 4. 将 config.json 里的 token 字符串修改为你在 [@BotFather](https://t.me/botfather) 获取到的 API Token，API hash 和 API id 修改为你在步骤2中获得的两串内容，其中 API ID 为数字，而 API Hash 为一组字符，你也可以对 config.json 里的内容酌情修改。
 
 内容说明:
 
 `channel`: Bot 日志记录频道，未填写将会导致无法正常工作（这是一个 bug，等待修复）。
+
 `manage_user`: 管理用户，不填写则控制bot离开群组的指令无效。
 
 5. 使用 `python3 main.py` 运行这个 bot,或者在 `/etc/systemd/system/ `下新建一个 .service 文件，使用 systemd 控制这个bot的运行，配置文件示例请参考本项目目录下的 `example.service` 文件进行修改。
+
 6. 将本 bot 加入一个群组，并给予封禁用户的权限，即可开始使用
+
 ## 在多个群组（10个以上等）部署本Bot的提示
+
 由于一个已知无解的严重 Bug， Bot 在运行一周至13天左右的时间可能会由于线程冲突导致整个 Bot 死掉，如果需要在多个（10个以上）的群组内部署本 Bot 请考虑在crontab等地方设置定期重启。  
+
 ## 实例
 [@toorucaptchabot](https://t.me/toorucaptchabot)  
 本项目在 PyPy 3.6 和 pyrogram v0.16.0.asyncio 上测试通过  
