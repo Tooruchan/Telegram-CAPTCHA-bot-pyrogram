@@ -1,6 +1,7 @@
 import asyncio
 import json
 import threading
+import logging,subprocess
 from time import time, sleep
 from challenge import Challenge
 from pyrogram import (
@@ -22,7 +23,8 @@ _start_message: str = None
 _current_challenges = dict()
 _cch_lock = threading.Lock()
 _config = dict()
-
+logging.basicConfig(level=logging.INFO)
+# 设置一下日志记录，能够在诸如 systemctl status captchabot 这样的地方获得详细输出。
 
 class _Timer:
     def __init__(self, callback, timeout):
