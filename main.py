@@ -345,14 +345,15 @@ def _update(app):
         chat_id = message.chat.id
         chat_title = message.chat.title
         target = message.from_user.id
-        await client.send_message(
-            int(_channel), _config['msg_attempt_try'].format(
-                botid=str(_me.id),
-                targetuser=str(target),
-                groupid=str(chat_id),
-                grouptitle=str(chat_title),
-            ))
-
+        """
+                await client.send_message(
+                    int(_channel), _config['msg_attempt_try'].format(
+                        botid=str(_me.id),
+                        targetuser=str(target),
+                        groupid=str(chat_id),
+                        grouptitle=str(chat_title),
+                    ))
+        """
         timeout_event = _Timer(
             challenge_timeout(client, message.chat.id, message.from_user.id,
                               reply_message.message_id),
