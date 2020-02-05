@@ -13,6 +13,11 @@ Remaked and forked based on [Original Repository](https://github.com/lziad/Teleg
 修改者：Telegram [@tooruchan](https://t.me/tooruchan) Rsplwe
 
 Bot实例: [@toorucaptchabot](https://t.me/toorucaptchabot)
+## 原理
+
+本 Bot 通过读取 Telegram API 中返回的入群消息来识别新用户入群，并生成一道随机问题对用户进行验证，非严格模式只要有回答问题就通过；严格模式下回答错误将会被移除或者封禁，这个验证的效果目前无法绕过具有人工操作的广告机器人，但是可以对外语（如阿拉伯语和波斯语）类骚扰用户起到一定的拦截作用。
+
+Telegram Bot API 使用了基于 MTProto 框架的 pyrogram，多线程使用了 asyncio。
 
 ## 安装与使用
 **由于 Bot 使用了 Python 3.6 的[变量类型标注](https://docs.python.org/zh-cn/3/library/typing.html)支持特性，在低于 Python 3.6 的版本上会出现 SyntaxError，因此源码只能在 Python 3.6+ 上运行!**  
@@ -37,11 +42,11 @@ cd Telegram-CAPTCHA-bot
 
 4. 将 config.json 里的 token 字符串修改为你在 [@BotFather](https://t.me/botfather) 获取到的 API Token，API hash 和 API id 修改为你在步骤2中获得的两串内容，其中 API ID 为数字，而 API Hash 为一组字符，你也可以对 config.json 里的内容酌情修改。
 
-内容说明:
+有关填写字段说明:
 
 `channel`: Bot 日志记录频道，未填写将会导致无法正常工作（这是一个 bug，等待修复）。
 
-`manage_user`: 管理用户，不填写则控制bot离开群组的指令无效。
+`manage_user`: 管理用户，不填写则`/leave`指令无效。
 
 5. 使用 `python3 main.py` 运行这个 bot,或者在 `/etc/systemd/system/ `下新建一个 .service 文件，使用 systemd 控制这个bot的运行，配置文件示例请参考本项目目录下的 `example.service` 文件进行修改。
 
@@ -51,13 +56,25 @@ cd Telegram-CAPTCHA-bot
 
 由于一个已知无解的严重 Bug， Bot 在运行一周至13天左右的时间可能会由于线程冲突导致整个 Bot 死掉，如果需要在多个（10个以上）的群组内部署本 Bot 请考虑在crontab等地方设置定期重启。  
 
-## 实例
-[@toorucaptchabot](https://t.me/toorucaptchabot)  
+## 日志
+在安装了 systemd ，且已经在 /etc/systemd/system 下部署了服务的 Linux 操作系统环境下，请使用命令：
+```bash
+journalctl -u captchabot.service 
+# 这里的 captchabot.service 请自行更名为你在服务器上部署的服务名
+```
+
+## 项目实例
+[@toorucaptchabot](https://t.me/toorucaptchabot)
+
 本项目在 PyPy 3.6 和 pyrogram v0.16.0.asyncio 上测试通过  
-[@AffyunWatchCatBot](https://t.me/AffyunWatchCatBot)  
-(环境为 Python 3.7.3 和 pyrogram v0.12.0.asyncio)  
-[@JustCaptchaBot](https://t.me/JustCaptchaBot)  
-(环境为 PyPy 3.6 + pyrogram v0.13.0.asyncio)  
+[@AffyunWatchCatBot](https://t.me/AffyunWatchCatBot)
+
+(环境为 Python 3.7.3 和 pyrogram v0.12.0.asyncio)
+
+[@JustCaptchaBot](https://t.me/JustCaptchaBot)
+
+(环境为 PyPy 3.6 + pyrogram v0.13.0.asyncio)
+
 ## 开源协议
 本项目使用 MIT 协议开源，使用请注明本项目地址。
 
