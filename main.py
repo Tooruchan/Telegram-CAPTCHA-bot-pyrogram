@@ -245,7 +245,7 @@ def _update(app):
                         group_config["msg_challenge_failed"],
                         reply_markup=None,
                     )
-                    await client.restrict_chat_member(chat_id, target)
+                    # await client.restrict_chat_member(chat_id, target)
                     _me: User = await client.get_me()
                     await client.send_message(
                         int(_channel),
