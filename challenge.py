@@ -11,19 +11,19 @@ class Challenge:
         self.new()
 
     def __str__(self):
-        return "{a}{op}{b}=?".format(a=self._a, b=self._b, op=self._op)
+        return "{a} {op} {b} 的结果是多少？".format(a=self._a, b=self._b, op=self._op)
 
     def new(self):
-        operation = random.choice(["+", "-", "*", "/"])
+        operation = random.choice(["加上", "减去", "乘以", "除以"])
         a, b, ans = 0, 0, 0
-        if operation in ["+", "-"]:
+        if operation in ["加上", "减去"]:
             a, b = random.randint(0, 50), random.randint(0, 50)
             a, b = max(a, b), min(a, b)
-            ans = a + b if operation == "+" else a - b
-        elif operation == "*":
+            ans = a + b if operation == "加上" else a - b
+        elif operation == "乘以":
             a, b = random.randint(0, 9), random.randint(0, 9)
             ans = a * b
-        elif operation == "/":
+        elif operation == "除以":
             a, b = random.randint(0, 9), random.randint(1, 9)
             ans = a
             a = a * b
