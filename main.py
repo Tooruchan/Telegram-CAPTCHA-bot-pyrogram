@@ -407,8 +407,12 @@ def _main():
     _channel = _config["channel"]
     _start_message = _config["msg_start_message"]
     _app = Client("bot", bot_token=_token, api_id=_api_id, api_hash=_api_hash)
-    _update(_app)
-    _app.run()
+    try:
+        _update(_app)
+        _app.run()
+    except Exception as e:
+        print(e)
+        _main()
 
 
 if __name__ == "__main__":
