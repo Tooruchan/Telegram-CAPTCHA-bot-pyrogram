@@ -207,6 +207,28 @@ def _update(app):
                 msg_id,
                 group_config["msg_challenge_passed"],
                 reply_markup=None)
+            #TODO 此处最近经常出现RPCError，服务器日志如下：
+            """
+            Feb 12 14:53:48 UBT-AMS-TG-BOT pypy3[3047]: ERROR:pyrogram.client.ext.dispatcher:[400 MESSAGE_NOT_MODIFIED]: The message was not modified (caused by "messages.EditMessage")
+            Feb 12 14:53:48 UBT-AMS-TG-BOT pypy3[3047]: Traceback (most recent call last):
+            Feb 12 14:53:48 UBT-AMS-TG-BOT pypy3[3047]:   File "/root/pypy3.6-v7.2.0-linux64/site-packages/pyrogram/client/ext/dispatcher.py", line 198, in update_worker
+            Feb 12 14:53:48 UBT-AMS-TG-BOT pypy3[3047]:     await handler.callback(self.client, *args)
+            Feb 12 14:53:48 UBT-AMS-TG-BOT pypy3[3047]:   File "/root/captcha/main.py", line 209, in challenge_callback
+            Feb 12 14:53:48 UBT-AMS-TG-BOT pypy3[3047]:     reply_markup=None)
+            Feb 12 14:53:48 UBT-AMS-TG-BOT pypy3[3047]:   File "/root/pypy3.6-v7.2.0-linux64/site-packages/pyrogram/client/methods/messages/edit_message_text.py", line 84, in edit_message_text
+            Feb 12 14:53:48 UBT-AMS-TG-BOT pypy3[3047]:     **await self.parser.parse(text, parse_mode)
+            Feb 12 14:53:48 UBT-AMS-TG-BOT pypy3[3047]:   File "/root/pypy3.6-v7.2.0-linux64/site-packages/pyrogram/client/client.py", line 1385, in send
+            Feb 12 14:53:48 UBT-AMS-TG-BOT pypy3[3047]:     r = await self.session.send(data, retries, timeout)
+            Feb 12 14:53:48 UBT-AMS-TG-BOT pypy3[3047]:   File "/root/pypy3.6-v7.2.0-linux64/site-packages/pyrogram/session/session.py", line 409, in send
+            Feb 12 14:53:48 UBT-AMS-TG-BOT pypy3[3047]:     return await self._send(data, timeout=timeout)
+            Feb 12 14:53:48 UBT-AMS-TG-BOT pypy3[3047]:   File "/root/pypy3.6-v7.2.0-linux64/site-packages/pyrogram/session/session.py", line 393, in _send
+            Feb 12 14:53:48 UBT-AMS-TG-BOT pypy3[3047]:     RPCError.raise_it(result, type(data))
+            Feb 12 14:53:48 UBT-AMS-TG-BOT pypy3[3047]:   File "/root/pypy3.6-v7.2.0-linux64/site-packages/pyrogram/errors/rpc_error.py", line 84, in raise_it
+            Feb 12 14:53:48 UBT-AMS-TG-BOT pypy3[3047]:     is_unknown=False)
+            """
+            # Update:
+            # 作者回应如下：
+            # https://github.com/pyrogram/pyrogram/issues/340#issuecomment-568481611
             _me: User = await client.get_me()
             await client.send_message(
                 int(_channel),
