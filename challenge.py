@@ -32,6 +32,7 @@ class Challenge:
     def __init__(self):
         self._a = 0
         self._b = 0
+        # 所以为啥要把a,b两个属性丢这里？我不是太懂。。。
         self._op = "加上"
         self._ans = 0
         self._choices = []
