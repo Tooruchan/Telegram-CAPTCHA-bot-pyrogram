@@ -68,20 +68,6 @@ def _update(app):
         else:
             pass
 
-    @app.on_message(Filters.command("sleave") & Filters.private)
-    async def sleave_command(client: Client, message: Message):
-        para = message.text.split()[-1]
-        if message.from_user.id == _config["manage_user"]:
-            try:
-                await client.leave_chat(int(para), True)
-            except Exception as e:
-                await message.reply("指令出错了！异常如下:\n\n `" + str(e) + "`",
-                                    parse_mode="md")
-            else:
-                await message.reply("已无声离开群组: `" + para + "`", parse_mode="md")
-        else:
-            pass
-
     @app.on_callback_query()
     async def challenge_callback(client: Client,
                                  callback_query: CallbackQuery):
@@ -412,8 +398,14 @@ def _main():
                       bot_token=_token,
                       api_id=_api_id,
                       api_hash=_api_hash)
-    _update(_app)
-    _app.run()
+    try:
+        _update(_app)
+        _app.run()
+    except KeyboardInterrupt:
+        quit()
+    except Exception as e:
+        logging.error(e)
+        _main()
 
 
 if __name__ == "__main__":
