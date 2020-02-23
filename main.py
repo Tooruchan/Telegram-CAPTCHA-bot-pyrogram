@@ -1,20 +1,14 @@
+# !/usr/bin/env python3
 import asyncio
 import json
 import threading
-import logging,subprocess
+import logging, subprocess
 from time import time, sleep
 from challenge import Challenge
-from pyrogram import (
-    Client,
-    Filters,
-    Message,
-    User,
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
-    CallbackQuery,
-    ChatPermissions
-)
-from pyrogram.errors import ChatAdminRequired,ChannelPrivate
+from pyrogram import (Client, Filters, Message, User, InlineKeyboardButton,
+                      InlineKeyboardMarkup, CallbackQuery, ChatPermissions)
+from pyrogram.errors import ChatAdminRequired, ChannelPrivate, ChannelInvalid
+from Timer import Timer
 
 _app: Client = None
 _channel: str = None
@@ -25,23 +19,6 @@ _cch_lock = threading.Lock()
 _config = dict()
 logging.basicConfig(level=logging.INFO)
 # 设置一下日志记录，能够在诸如 systemctl status captchabot 这样的地方获得详细输出。
-
-class _Timer:
-    def __init__(self, callback, timeout):
-        loop = asyncio.get_event_loop()
-        self.callback = callback
-        self.timeout = timeout
-        self.task = loop.create_task(self.wait())
-
-    async def wait(self):
-        await asyncio.sleep(self.timeout)
-        await self.callback
-
-    def stop(self):
-        try:
-            self.task.cancel()
-        except asyncio.CancelledError:
-            pass
 
 
 def load_config():
@@ -78,12 +55,30 @@ def _update(app):
                 await message.reply("已离开群组: `" + chat_id + "`",
                                     parse_mode="Markdown")
                 _me: User = await client.get_me()
-                await client.send_message(int(_channel),
-                                          _config["msg_leave_group"].format(
-                                              botid=str(_me.id),
-                                              groupid=chat_id,
-                                          ),
-                                          parse_mode="Markdown")
+                try:
+                    await client.send_message(
+                        int(_channel),
+                        _config["msg_leave_group"].format(
+                            botid=str(_me.id),
+                            groupid=chat_id,
+                        ),
+                        parse_mode="Markdown")
+                except Exception as e:
+                    logging.error(str(e))
+        else:
+            pass
+
+    @app.on_message(Filters.command("sleave") & Filters.private)
+    async def sleave_command(client: Client, message: Message):
+        para = message.text.split()[-1]
+        if message.from_user.id == _config["manage_user"]:
+            try:
+                await client.leave_chat(int(para), True)
+            except Exception as e:
+                await message.reply("指令出错了！异常如下:\n\n `" + str(e) + "`",
+                                    parse_mode="md")
+            else:
+                await message.reply("已无声离开群组: `" + para + "`", parse_mode="md")
         else:
             pass
 
@@ -103,8 +98,7 @@ def _update(app):
                                                    filter="administrators")
             if not any([
                     admin.user.id == user_id and
-                (admin.status == "creator"
-                 or admin.can_restrict_members)
+                (admin.status == "creator" or admin.can_restrict_members)
                     for admin in admins
             ]):
                 await client.answer_callback_query(
@@ -124,12 +118,13 @@ def _update(app):
                 try:
                     await client.restrict_chat_member(
                         chat_id,
-                        target,permissions=ChatPermissions(
-                        can_send_other_messages=True,
-                        can_send_messages=True,
-                        can_send_media_messages=True,
-                        can_add_web_page_previews=True,
-                    ))
+                        target,
+                        permissions=ChatPermissions(
+                            can_send_other_messages=True,
+                            can_send_messages=True,
+                            can_send_media_messages=True,
+                            can_add_web_page_previews=True,
+                        ))
                 except ChatAdminRequired:
                     await client.answer_callback_query(
                         query_id, group_config["msg_bot_no_permission"])
@@ -190,13 +185,14 @@ def _update(app):
             return None
         timeout_event.stop()
         try:
-            await client.restrict_chat_member(chat_id,
-                                              target,permissions=ChatPermissions(
-                                              can_send_other_messages=True,
-                                              can_send_messages=True,
-                                              can_send_media_messages=True,
-                                              can_add_web_page_previews=True,
-                                              can_send_polls=True))
+            await client.restrict_chat_member(
+                chat_id,
+                target,
+                permissions=ChatPermissions(can_send_other_messages=True,
+                                            can_send_messages=True,
+                                            can_send_media_messages=True,
+                                            can_add_web_page_previews=True,
+                                            can_send_polls=True))
         except ChatAdminRequired:
             pass
 
@@ -207,28 +203,6 @@ def _update(app):
                 msg_id,
                 group_config["msg_challenge_passed"],
                 reply_markup=None)
-            #TODO 此处最近经常出现RPCError，服务器日志如下：
-            """
-            Feb 12 14:53:48 UBT-AMS-TG-BOT pypy3[3047]: ERROR:pyrogram.client.ext.dispatcher:[400 MESSAGE_NOT_MODIFIED]: The message was not modified (caused by "messages.EditMessage")
-            Feb 12 14:53:48 UBT-AMS-TG-BOT pypy3[3047]: Traceback (most recent call last):
-            Feb 12 14:53:48 UBT-AMS-TG-BOT pypy3[3047]:   File "/root/pypy3.6-v7.2.0-linux64/site-packages/pyrogram/client/ext/dispatcher.py", line 198, in update_worker
-            Feb 12 14:53:48 UBT-AMS-TG-BOT pypy3[3047]:     await handler.callback(self.client, *args)
-            Feb 12 14:53:48 UBT-AMS-TG-BOT pypy3[3047]:   File "/root/captcha/main.py", line 209, in challenge_callback
-            Feb 12 14:53:48 UBT-AMS-TG-BOT pypy3[3047]:     reply_markup=None)
-            Feb 12 14:53:48 UBT-AMS-TG-BOT pypy3[3047]:   File "/root/pypy3.6-v7.2.0-linux64/site-packages/pyrogram/client/methods/messages/edit_message_text.py", line 84, in edit_message_text
-            Feb 12 14:53:48 UBT-AMS-TG-BOT pypy3[3047]:     **await self.parser.parse(text, parse_mode)
-            Feb 12 14:53:48 UBT-AMS-TG-BOT pypy3[3047]:   File "/root/pypy3.6-v7.2.0-linux64/site-packages/pyrogram/client/client.py", line 1385, in send
-            Feb 12 14:53:48 UBT-AMS-TG-BOT pypy3[3047]:     r = await self.session.send(data, retries, timeout)
-            Feb 12 14:53:48 UBT-AMS-TG-BOT pypy3[3047]:   File "/root/pypy3.6-v7.2.0-linux64/site-packages/pyrogram/session/session.py", line 409, in send
-            Feb 12 14:53:48 UBT-AMS-TG-BOT pypy3[3047]:     return await self._send(data, timeout=timeout)
-            Feb 12 14:53:48 UBT-AMS-TG-BOT pypy3[3047]:   File "/root/pypy3.6-v7.2.0-linux64/site-packages/pyrogram/session/session.py", line 393, in _send
-            Feb 12 14:53:48 UBT-AMS-TG-BOT pypy3[3047]:     RPCError.raise_it(result, type(data))
-            Feb 12 14:53:48 UBT-AMS-TG-BOT pypy3[3047]:   File "/root/pypy3.6-v7.2.0-linux64/site-packages/pyrogram/errors/rpc_error.py", line 84, in raise_it
-            Feb 12 14:53:48 UBT-AMS-TG-BOT pypy3[3047]:     is_unknown=False)
-            """
-            # Update:
-            # 作者回应如下：
-            # https://github.com/pyrogram/pyrogram/issues/340#issuecomment-568481611
             _me: User = await client.get_me()
             await client.send_message(
                 int(_channel),
@@ -291,12 +265,12 @@ def _update(app):
                     pass
 
                 if group_config["delete_failed_challenge"]:
-                    _Timer(
+                    Timer(
                         client.delete_messages(chat_id, msg_id),
                         group_config["delete_failed_challenge_interval"],
                     )
         if group_config["delete_passed_challenge"]:
-            _Timer(
+            Timer(
                 client.delete_messages(chat_id, msg_id),
                 group_config["delete_passed_challenge_interval"],
             )
@@ -324,13 +298,14 @@ def _update(app):
                     return
             return
         try:
-            await client.restrict_chat_member(chat_id=message.chat.id,
-                                              user_id=target.id,permissions=ChatPermissions(
-                                              can_send_other_messages=False,
-                                              can_send_messages=False,
-                                              can_send_media_messages=False,
-                                              can_add_web_page_previews=False,
-                                              can_send_polls=False))
+            await client.restrict_chat_member(
+                chat_id=message.chat.id,
+                user_id=target.id,
+                permissions=ChatPermissions(can_send_other_messages=False,
+                                            can_send_messages=False,
+                                            can_send_media_messages=False,
+                                            can_add_web_page_previews=False,
+                                            can_send_polls=False))
         except ChatAdminRequired:
             return
         group_config = _config.get(str(message.chat.id), _config["*"])
@@ -367,16 +342,7 @@ def _update(app):
         chat_id = message.chat.id
         chat_title = message.chat.title
         target = message.from_user.id
-        """
-                await client.send_message(
-                    int(_channel), _config['msg_attempt_try'].format(
-                        botid=str(_me.id),
-                        targetuser=str(target),
-                        groupid=str(chat_id),
-                        grouptitle=str(chat_title),
-                    ))
-        """
-        timeout_event = _Timer(
+        timeout_event = Timer(
             challenge_timeout(client, message.chat.id, message.from_user.id,
                               reply_message.message_id),
             timeout=group_config["challenge_timeout"],
@@ -390,6 +356,7 @@ def _update(app):
 
     async def challenge_timeout(client: Client, chat_id, from_id, reply_id):
         global _current_challenges
+        _me: User = await client.get_me()
         group_config = _config.get(str(chat_id), _config["*"])
 
         _cch_lock.acquire()
@@ -404,7 +371,11 @@ def _update(app):
             text=group_config["msg_challenge_failed"],
             reply_markup=None,
         )
-
+        await client.send_message(chat_id=_config["channel"],
+                                  text=_config["msg_failed_timeout"].format(
+                                      botid=str(_me.id),
+                                      targetuser=str(from_id),
+                                      groupid=str(chat_id)))
         if group_config["challenge_timeout_action"] == "ban":
             await client.kick_chat_member(chat_id, from_id)
         elif group_config["challenge_timeout_action"] == "kick":
@@ -414,27 +385,35 @@ def _update(app):
             pass
 
         if group_config["delete_failed_challenge"]:
-            _Timer(
+            Timer(
                 client.delete_messages(chat_id, reply_id),
                 group_config["delete_failed_challenge_interval"],
             )
 
 
 def _main():
-    global _app, _channel, _start_message
+    global _app, _channel, _start_message, _config
     load_config()
     _api_id = _config["api_id"]
     _api_hash = _config["api_hash"]
     _token = _config["token"]
     _channel = _config["channel"]
     _start_message = _config["msg_start_message"]
-    _app = Client("bot", bot_token=_token, api_id=_api_id, api_hash=_api_hash)
-    try:
-        _update(_app)
-        _app.run()
-    except Exception as e:
-        print(e)
-        _main()
+    _proxy_ip = _config["proxy_addr"].strip()
+    _proxy_port = _config["proxy_port"].strip()
+    if _proxy_ip and _proxy_port:
+        _app = Client("bot",
+                      bot_token=_token,
+                      api_id=_api_id,
+                      api_hash=_api_hash,
+                      proxy=dict(hostname=_proxy_ip, port=int(_proxy_port)))
+    else:
+        _app = Client("bot",
+                      bot_token=_token,
+                      api_id=_api_id,
+                      api_hash=_api_hash)
+    _update(_app)
+    _app.run()
 
 
 if __name__ == "__main__":
