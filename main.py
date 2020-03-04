@@ -33,6 +33,12 @@ def save_config():
 
 
 def _update(app):
+    @app.on_message(Filters.command("help") & Filters.group)
+    async def helping_cmd(client:Client,message:Message):
+        _me: User = await client.get_me()
+        logging.info(message.text)
+        await message.reply(_config["*"]["msg_self_introduction"])
+        
     @app.on_message(Filters.command("ping") & Filters.private)
     async def ping_command(client: Client, message: Message):
         await message.reply("poi~")
@@ -96,7 +102,8 @@ def _update(app):
             # target: int = None
             challenge, target, timeout_event = _current_challenges.get(
                 ch_id, (None, None, None))
-            del _current_challenges[ch_id]
+            if ch_id in _current_challenges:
+                del _current_challenges[ch_id]
             _cch_lock.release()
             timeout_event.stop()
 
@@ -123,16 +130,19 @@ def _update(app):
                     reply_markup=None,
                 )
                 _me: User = await client.get_me()
-                await client.send_message(
-                    int(_channel),
-                    _config["msg_passed_admin"].format(
-                        botid=str(_me.id),
-                        targetuser=str(target),
-                        groupid=str(chat_id),
-                        grouptitle=str(chat_title),
-                    ),
-                    parse_mode="Markdown",
-                )
+                try:
+                    await client.send_message(
+                        int(_channel),
+                        _config["msg_passed_admin"].format(
+                            botid=str(_me.id),
+                            targetuser=str(target),
+                            groupid=str(chat_id),
+                            grouptitle=str(chat_title),
+                        ),
+                        parse_mode="Markdown",
+                    )
+                except Exception as e:
+                    logging.error(str(e))
             else:
                 try:
                     await client.kick_chat_member(chat_id, target)
@@ -147,16 +157,19 @@ def _update(app):
                     reply_markup=None,
                 )
                 _me: User = await client.get_me()
-                await client.send_message(
-                    int(_channel),
-                    _config["msg_failed_admin"].format(
-                        botid=str(_me.id),
-                        targetuser=str(target),
-                        groupid=str(chat_id),
-                        grouptitle=str(chat_title),
-                    ),
-                    parse_mode="Markdown",
-                )
+                try:
+                    await client.send_message(
+                        int(_channel),
+                        _config["msg_failed_admin"].format(
+                            botid=str(_me.id),
+                            targetuser=str(target),
+                            groupid=str(chat_id),
+                            grouptitle=str(chat_title),
+                        ),
+                        parse_mode="Markdown",
+                    )
+                except Exception as e:
+                    logging.error(str(e))
             await client.answer_callback_query(query_id)
             return
 
@@ -190,16 +203,19 @@ def _update(app):
                 group_config["msg_challenge_passed"],
                 reply_markup=None)
             _me: User = await client.get_me()
-            await client.send_message(
-                int(_channel),
-                _config["msg_passed_answer"].format(
-                    botid=str(_me.id),
-                    targetuser=str(target),
-                    groupid=str(chat_id),
-                    grouptitle=str(chat_title),
-                ),
-                parse_mode="Markdown",
-            )
+            try:
+                await client.send_message(
+                    int(_channel),
+                    _config["msg_passed_answer"].format(
+                        botid=str(_me.id),
+                        targetuser=str(target),
+                        groupid=str(chat_id),
+                        grouptitle=str(chat_title),
+                    ),
+                    parse_mode="Markdown",
+                )
+            except Exception as e:
+                logging.error(str(e))
         else:
             if not group_config["use_strict_mode"]:
                 await client.edit_message_text(
@@ -209,16 +225,19 @@ def _update(app):
                     reply_markup=None,
                 )
                 _me: User = await client.get_me()
-                await client.send_message(
-                    int(_channel),
-                    _config["msg_passed_mercy"].format(
-                        botid=str(_me.id),
-                        targetuser=str(target),
-                        groupid=str(chat_id),
-                        grouptitle=str(chat_title),
-                    ),
-                    parse_mode="Markdown",
-                )
+                try:
+                    await client.send_message(
+                        int(_channel),
+                        _config["msg_passed_mercy"].format(
+                            botid=str(_me.id),
+                            targetuser=str(target),
+                            groupid=str(chat_id),
+                            grouptitle=str(chat_title),
+                        ),
+                        parse_mode="Markdown",
+                    )
+                except Exception as e:
+                    logging.error(str(e))
             else:
                 try:
                     await client.edit_message_text(
@@ -229,16 +248,19 @@ def _update(app):
                     )
                     # await client.restrict_chat_member(chat_id, target)
                     _me: User = await client.get_me()
-                    await client.send_message(
-                        int(_channel),
-                        _config["msg_failed_answer"].format(
-                            botid=str(_me.id),
-                            targetuser=str(target),
-                            groupid=str(chat_id),
-                            grouptitle=str(chat_title),
-                        ),
-                        parse_mode="Markdown",
-                    )
+                    try:
+                        await client.send_message(
+                            int(_channel),
+                            _config["msg_failed_answer"].format(
+                                botid=str(_me.id),
+                                targetuser=str(target),
+                                groupid=str(chat_id),
+                                grouptitle=str(chat_title),
+                            ),
+                            parse_mode="Markdown",
+                        )
+                    except Exception as e:
+                        logging.error(str(e))
                 except ChatAdminRequired:
                     return
 
@@ -271,15 +293,18 @@ def _update(app):
                     await client.send_message(
                         message.chat.id, group_config["msg_self_introduction"])
                     _me: User = await client.get_me()
-                    await client.send_message(
-                        int(_channel),
-                        _config["msg_into_group"].format(
-                            botid=str(_me.id),
-                            groupid=str(message.chat.id),
-                            grouptitle=str(message.chat.title),
-                        ),
-                        parse_mode="Markdown",
-                    )
+                    try:
+                        await client.send_message(
+                            int(_channel),
+                            _config["msg_into_group"].format(
+                                botid=str(_me.id),
+                                groupid=str(message.chat.id),
+                                grouptitle=str(message.chat.title),
+                            ),
+                            parse_mode="Markdown",
+                        )
+                    except Exception as e:
+                        logging.error(str(e))
                 except ChannelPrivate:
                     return
             return
