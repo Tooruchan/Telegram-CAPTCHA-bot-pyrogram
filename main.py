@@ -34,11 +34,11 @@ def save_config():
 
 def _update(app):
     @app.on_message(Filters.command("help") & Filters.group)
-    async def helping_cmd(client:Client,message:Message):
+    async def helping_cmd(client: Client, message: Message):
         _me: User = await client.get_me()
         logging.info(message.text)
         await message.reply(_config["*"]["msg_self_introduction"])
-        
+
     @app.on_message(Filters.command("ping") & Filters.private)
     async def ping_command(client: Client, message: Message):
         await message.reply("poi~")
@@ -117,7 +117,7 @@ def _update(app):
                             can_send_messages=True,
                             can_send_media_messages=True,
                             can_add_web_page_previews=True,
-                        ))
+                            can_send_polls=True))
                 except ChatAdminRequired:
                     await client.answer_callback_query(
                         query_id, group_config["msg_bot_no_permission"])
@@ -269,6 +269,17 @@ def _update(app):
                 elif group_config["challenge_timeout_action"] == "kick":
                     await client.kick_chat_member(chat_id, user_id)
                     await client.unban_chat_member(chat_id, user_id)
+                elif group_config["challenge_timeout_action"] == "mute":
+                    await client.restrict_chat_member(
+                        chat_id,
+                        user_id,
+                        permissions=ChatPermissions(
+                            can_send_other_messages=False,
+                            can_send_messages=False,
+                            can_send_media_messages=False,
+                            can_add_web_page_previews=False,
+                            can_send_polls=False))
+
                 else:
                     pass
 
