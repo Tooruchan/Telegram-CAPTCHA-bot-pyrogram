@@ -1,4 +1,5 @@
 # !/usr/bin/env python3
+# -*- coding: UTF-8 -*-
 import asyncio
 import json
 import threading
@@ -7,7 +8,7 @@ from time import time, sleep
 from challenge import Challenge
 from pyrogram import (Client, Filters, Message, User, InlineKeyboardButton,
                       InlineKeyboardMarkup, CallbackQuery, ChatPermissions)
-from pyrogram.errors import ChatAdminRequired, ChannelPrivate, ChannelInvalid
+from pyrogram.errors import ChatAdminRequired, ChannelPrivate, ChannelInvalid, MessageNotModified
 from Timer import Timer
 
 _app: Client = None
@@ -37,7 +38,33 @@ def _update(app):
     async def helping_cmd(client: Client, message: Message):
         _me: User = await client.get_me()
         logging.info(message.text)
-        await message.reply(_config["*"]["msg_self_introduction"])
+        await message.reply(_config["*"]["msg_self_introduction"],
+                            disable_web_page_preview=True)
+
+    @app.on_message(Filters.command("config") & Filters.private)
+    async def show_config(client: Client, message: Message):
+        # 调试专用
+        global _config
+        user = message.from_user
+        mconfig = _config
+        string_config = ''
+        try:
+            mconfig['token'] = ''
+            mconfig['api_hash'] = ''
+            mconfig['api_id'] = ''
+            mconfig['proxy_addr'] = ''
+            mconfig['proxy_port'] = ''
+        except Exception as e:
+            await client.send_message(user.id, text=str(e))
+            return
+        for key, value in mconfig.items():
+            string_config = string_config + key + ': "' + value + '"\n'
+        if user.id == _config["manage_user"]:
+            await client.send_message(
+                user.id,
+                text="<code>{0}</code>".format(string_config),
+                parse_mode="HTML",
+                disable_web_page_preview=True)
 
     @app.on_message(Filters.command("ping") & Filters.private)
     async def ping_command(client: Client, message: Message):
@@ -103,10 +130,10 @@ def _update(app):
             challenge, target, timeout_event = _current_challenges.get(
                 ch_id, (None, None, None))
             if ch_id in _current_challenges:
+                # 预防异常
                 del _current_challenges[ch_id]
             _cch_lock.release()
             timeout_event.stop()
-
             if query_data == "+":
                 try:
                     await client.restrict_chat_member(
@@ -197,12 +224,16 @@ def _update(app):
 
         correct = str(challenge.ans()) == query_data
         if correct:
-            await client.edit_message_text(
-                chat_id,
-                msg_id,
-                group_config["msg_challenge_passed"],
-                reply_markup=None)
-            _me: User = await client.get_me()
+            try:
+                await client.edit_message_text(
+                    chat_id,
+                    msg_id,
+                    group_config["msg_challenge_passed"],
+                    reply_markup=None)
+                _me: User = await client.get_me()
+            except MessageNotModified as e:
+                await client.send_message(int(_channel),
+                                          'Bot 运行时发生异常: `' + str(e) + "`")
             try:
                 await client.send_message(
                     int(_channel),
