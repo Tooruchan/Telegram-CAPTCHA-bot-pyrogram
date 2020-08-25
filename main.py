@@ -17,6 +17,17 @@ _app: Client = None
 _current_challenges = dict()
 _cch_lock = threading.Lock()
 _config = dict()
+'''
+读 只 读 配 置
+'''
+cf = ConfigParser() #启用ConfigParser读取那些启动后即不会再被更改的数据，如BotToken等
+cf.read("auth.ini")
+_admin_user = cf.getint("bot", "admin")
+_token = cf.get("bot", "token")
+_api_id = cf.getint("bot", "api_id")
+_api_hash = cf.get("bot", "api_hash")
+_admin_user = cf.getint("bot", "admin")
+_channel = cf.getint("bot", "channel")
 logging.basicConfig(level=logging.INFO)
 # 设置一下日志记录，能够在诸如 systemctl status captchabot 这样的地方获得详细输出。
 
@@ -33,13 +44,23 @@ def save_config():
 
 
 def _update(app):
+    @app.on_message(Filters.command("reload") & Filters.private)
+    async def reload_cfg(client: Client, message: Message):
+        _me: User = await client.get_me()
+        logging.info(message.text)
+        if message.from_user.id == _admin_user:
+            load_config()
+            await message.reply("配置已成功重载。")
+        else:
+            logging.info("Permission denied, admin user in config is:"+_admin_user)
+            pass
+
     @app.on_message(Filters.command("help") & Filters.group)
     async def helping_cmd(client: Client, message: Message):
         _me: User = await client.get_me()
         logging.info(message.text)
         await message.reply(_config["*"]["msg_self_introduction"],
                             disable_web_page_preview=True)
-
     @app.on_message(Filters.command("ping") & Filters.private)
     async def ping_command(client: Client, message: Message):
         await message.reply("poi~")
@@ -421,13 +442,6 @@ def _update(app):
 def _main():
     global _app, _channel, _start_message, _config
     load_config()
-    cf = ConfigParser() #启用ConfigParser读取那些启动后即不会再被更改的数据，如BotToken等
-    cf.read("auth.ini")
-    _token = cf.get("bot", "token")
-    _api_id = cf.getint("bot", "api_id")
-    _api_hash = cf.get("bot", "api_hash")
-    _admin_user = cf.getint("bot", "admin")
-    _channel = cf.getint("bot", "channel")
     _start_message = _config["msg_start_message"]
     _proxy_ip = _config["proxy_addr"].strip()
     _proxy_port = _config["proxy_port"].strip()
