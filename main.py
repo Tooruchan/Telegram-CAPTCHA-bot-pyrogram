@@ -4,6 +4,7 @@ import asyncio
 import json
 import threading
 import logging, subprocess
+from configparser import ConfigParser
 from time import time, sleep
 from challenge import Challenge
 from pyrogram import (Client, Filters, Message, User, InlineKeyboardButton,
@@ -12,8 +13,6 @@ from pyrogram.errors import ChatAdminRequired, ChannelPrivate, ChannelInvalid, M
 from Timer import Timer
 
 _app: Client = None
-_channel: str = None
-_start_message: str = None
 # _challenge_scheduler = sched.scheduler(time, sleep)
 _current_challenges = dict()
 _cch_lock = threading.Lock()
@@ -41,31 +40,6 @@ def _update(app):
         await message.reply(_config["*"]["msg_self_introduction"],
                             disable_web_page_preview=True)
 
-    @app.on_message(Filters.command("config") & Filters.private)
-    async def show_config(client: Client, message: Message):
-        # 调试专用
-        global _config
-        user = message.from_user
-        mconfig = _config
-        string_config = ''
-        try:
-            mconfig['token'] = ''
-            mconfig['api_hash'] = ''
-            mconfig['api_id'] = ''
-            mconfig['proxy_addr'] = ''
-            mconfig['proxy_port'] = ''
-        except Exception as e:
-            await client.send_message(user.id, text=str(e))
-            return
-        for key, value in mconfig.items():
-            string_config = string_config + key + ': "' + value + '"\n'
-        if user.id == _config["manage_user"]:
-            await client.send_message(
-                user.id,
-                text="<code>{0}</code>".format(string_config),
-                parse_mode="HTML",
-                disable_web_page_preview=True)
-
     @app.on_message(Filters.command("ping") & Filters.private)
     async def ping_command(client: Client, message: Message):
         await message.reply("poi~")
@@ -77,7 +51,7 @@ def _update(app):
     @app.on_message(Filters.command("leave") & Filters.private)
     async def leave_command(client: Client, message: Message):
         chat_id = message.text.split()[-1]
-        if message.from_user.id == _config["manage_user"]:
+        if message.from_user.id == _admin_user:
             try:
                 await client.send_message(int(chat_id),
                                           _config["msg_leave_msg"])
@@ -447,10 +421,13 @@ def _update(app):
 def _main():
     global _app, _channel, _start_message, _config
     load_config()
-    _api_id = _config["api_id"]
-    _api_hash = _config["api_hash"]
-    _token = _config["token"]
-    _channel = _config["channel"]
+    cf = ConfigParser() #启用ConfigParser读取那些启动后即不会再被更改的数据，如BotToken等
+    cf.read("auth.ini")
+    _token = cf.get("bot", "token")
+    _api_id = cf.getint("bot", "api_id")
+    _api_hash = cf.get("bot", "api_hash")
+    _admin_user = cf.getint("bot", "admin")
+    _channel = cf.getint("bot", "channel")
     _start_message = _config["msg_start_message"]
     _proxy_ip = _config["proxy_addr"].strip()
     _proxy_port = _config["proxy_port"].strip()

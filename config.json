@@ -1,11 +1,6 @@
 {
-  "token": "",
-  "api_id": 0,
-  "api_hash": "",
-  "channel": -100,
   "proxy_addr":"",
   "proxy_port":"",
-  "manage_user": 0,
   "msg_start_message": "喵？",
   "msg_passed_answer": "#PASS\nOPBot: `{botid}`\n用户 ID: `{targetuser}` \n事件: 通过验证.\n群组 ID: `{groupid}`\n群组标题: `{grouptitle}`",
   "msg_passed_mercy": "#PASS_WRONG_ANSWER\nOPBot: `{botid}`\n用户 ID: `{targetuser}` \n事件: 回答错误，通过验证.\n群组 ID: `{groupid}`\n群组标题: `{grouptitle}`",

@@ -1,7 +1,12 @@
 # config files
 config.json
+auth.ini
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
+
+# Pyrogram data
+*.session
+*.session-journal
