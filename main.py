@@ -49,6 +49,7 @@ def _update(app):
         _me: User = await client.get_me()
         logging.info(message.text)
         if message.from_user.id == _admin_user:
+            save_config()
             load_config()
             await message.reply("配置已成功重载。")
         else:
