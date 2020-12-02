@@ -13,6 +13,23 @@ Remaked and forked based on [Original Repository](https://github.com/lziad/Teleg
 修改者：Telegram [@Yoshida_Yuuko](https://t.me/Yoshida_Yuuko) Rsplwe
 
 Bot实例: [@toorucaptchabot](https://t.me/toorucaptchabot)
+## 一些简单的Q&A
+
+**Q:** 请问这个Bot是否会窃听群组消息？
+
+**A:** 根据 [Telegram 官方文档](https://core.telegram.org/bots#privacy-mode)，工作在隐私模式下的非管理员 bot 只能获取下列几种消息：
+
+       - 以"/"斜杠开头的命令
+       
+       - 对 bot 消息的回复
+       
+       - 服务消息（即进群和退群消息等，这也是本Bot工作的原理）
+       
+       - 当 bot 是某一频道的管理员时，从这个频道转发出来的消息
+       
+       如果你对我们现有的部署不放心的话，可以自行 clone 本仓库代码并在自己的服务器/Docker 容器上自行部署。
+       
+       ~~如果你并没有编程基础，或者并没有详细阅读本项目的代码，而对本项目的安全性提出质疑，我们将会不予理会。~~
 ## 原理
 
 本 Bot 通过读取 Telegram API 中返回的入群消息来识别新用户入群，并生成一道随机问题对用户进行验证，非严格模式只要有回答问题就通过；严格模式下回答错误将会被移除或者封禁，这个验证的效果目前无法绕过具有人工操作的广告机器人，但是可以对外语（如阿拉伯语和波斯语）类骚扰用户起到一定的拦截作用。
@@ -80,7 +97,3 @@ journalctl -u captchabot.service
 
 ## 开源协议
 本项目使用 GNU Affero 通用公共许可证 3.0 开源
-
-
-
-
