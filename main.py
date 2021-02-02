@@ -26,7 +26,6 @@ _admin_user = cf.getint("bot", "admin")
 _token = cf.get("bot", "token")
 _api_id = cf.getint("bot", "api_id")
 _api_hash = cf.get("bot", "api_hash")
-_admin_user = cf.getint("bot", "admin")
 _channel = cf.getint("bot", "channel")
 logging.basicConfig(level=logging.INFO)
 
