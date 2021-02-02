@@ -39,7 +39,7 @@ Bot实例: [@toorucaptchabot](https://t.me/toorucaptchabot)
 Telegram Bot API 使用了基于 MTProto 框架的 pyrogram，多线程使用了 asyncio。
 
 ## 安装与使用
-**由于 Bot 使用了 Python 3.6 的[变量类型标注](https://docs.python.org/zh-cn/3/library/typing.html)支持特性，在低于 Python 3.6 的版本上会出现 SyntaxError，因此源码只能在 Python 3.6+ 上运行!**  
+**由于 Bot 使用了 Python 3.6 的 [变量类型标注](https://docs.python.org/zh-cn/3/library/typing.html) 这一特性，在低于 Python 3.6 的版本上会出现 SyntaxError，因此源码只能在 Python 3.6+ 上运行!**  
 1. 请先向 [@BotFather](https://t.me/botfather) 申请一个 Bot API Token  
 > 你申请到的机器人会在你的 Telegram 账号所在数据中心上运行（即申请机器人的账号A位于 DC 5 (新加坡)，则 A 申请到的机器人也将会在 DC5 上运行)
 2. 在 [Obtaining Telegram API ID](https://core.telegram.org/api/obtaining_api_id) 申请 API ID 与 API Hash
@@ -47,19 +47,13 @@ Telegram Bot API 使用了基于 MTProto 框架的 pyrogram，多线程使用了
 ```
 # 若未安装pip3，请先安装 python3-pip
 apt install python3-pip
-pip3 install -U https://github.com/Tooruchan/Telegram-CAPTCHA-bot/raw/master/pyrogram-asyncio.zip
-# 由于 pyrogram 经常更新伴随着大改语法，所以在这里直接使用最适合当前版本的 pyrogram 版本，以免部署时发生意外情况。
-# pyrogram-asyncio.zip 的校验：
-# SHA1: E57BDF355E2B3CA04C6934BB94254ABA7A45A5AF
-# CRC32: E4016E8D
-pip3 install --upgrade tgcrypto configparser
-```
-``` 
+pip3 install -U tgcrypto pyrogram configparser
+# 项目当前已适配并兼容最新的 pyrogram v1.1.3（自带 asyncio 支持），直接通过 Pypi 安装即可。
 git clone https://github.com/Tooruchan/Telegram-CAPTCHA-bot 
 cd Telegram-CAPTCHA-bot
 ```
 
-4. 将 auth.ini 里的 token 字段（与等号间存在一个空格）修改为你在 [@BotFather](https://t.me/botfather) 获取到的 API Token，api_hash 和 api_id 修改为你在步骤2中获得的两串内容，其中 API ID 为数字，而 API Hash 为一组字符，你也可以对 config.json 里的内容酌情修改。
+4. 将项目文件夹中 auth.ini 里的 token 字段（与等号间存在一个空格）修改为你在 [@BotFather](https://t.me/botfather) 获取到的 API Token，api_hash 和 api_id 修改为你在步骤2中获得的两串内容，其中 API ID 为数字，而 API Hash 为一组字符，你也可以对 config.json 里的内容酌情修改。
 
 有关填写字段说明:
 
