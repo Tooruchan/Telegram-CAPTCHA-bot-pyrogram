@@ -1,17 +1,16 @@
 # !/usr/bin/env python3
 # -*- coding: UTF-8 -*-
-import asyncio
 import json
+import logging
 import threading
-import logging, subprocess
 from configparser import ConfigParser
-from time import time, sleep
-from challenge import Challenge
+
 from pyrogram import (Client, filters)
-from pyrogram.types import (InlineQueryResultArticle, InputTextMessageContent,
-                            InlineKeyboardMarkup, InlineKeyboardButton, User, Message, ChatPermissions, CallbackQuery)
-from pyrogram.errors import ChatAdminRequired, ChannelPrivate, ChannelInvalid, MessageNotModified
+from pyrogram.errors import ChatAdminRequired, ChannelPrivate, MessageNotModified
+from pyrogram.types import (InlineKeyboardMarkup, InlineKeyboardButton, User, Message, ChatPermissions, CallbackQuery)
+
 from Timer import Timer
+from challenge import Challenge
 
 _app: Client = None
 # _challenge_scheduler = sched.scheduler(time, sleep)
@@ -100,6 +99,90 @@ def _update(app):
                     logging.error(str(e))
         else:
             pass
+
+
+    @app.on_message(filters.new_chat_members)
+    async def challenge_user(client: Client, message: Message):
+        target = message.new_chat_members[0]
+        if message.from_user.id != target.id:
+            if target.is_self:
+                group_config = _config.get(str(message.chat.id), _config["*"])
+                try:
+                    await client.send_message(
+                        message.chat.id, group_config["msg_self_introduction"])
+                    _me: User = await client.get_me()
+                    try:
+                        await client.send_message(
+                            int(_channel),
+                            _config["msg_into_group"].format(
+                                botid=str(_me.id),
+                                groupid=str(message.chat.id),
+                                grouptitle=str(message.chat.title),
+                            ),
+                            parse_mode="Markdown",
+                        )
+                    except Exception as e:
+                        logging.error(str(e))
+                except ChannelPrivate:
+                    return
+            return
+        try:
+            await client.restrict_chat_member(
+                chat_id=message.chat.id,
+                user_id=target.id,
+                permissions=ChatPermissions(can_send_stickers=False,
+                                            can_send_messages=False,
+                                            can_send_media_messages=False,
+                                            can_add_web_page_previews=False,
+                                            can_send_polls=False,
+                                            can_send_animations=False))
+        except ChatAdminRequired:
+            return
+        group_config = _config.get(str(message.chat.id), _config["*"])
+        challenge = Challenge()
+
+        def generate_challenge_button(e):
+            choices = []
+            answers = []
+            for c in e.choices():
+                answers.append(
+                    InlineKeyboardButton(str(c),
+                                         callback_data=bytes(
+                                             str(c), encoding="utf-8")))
+            choices.append(answers)
+            return choices + [[
+                InlineKeyboardButton(group_config["msg_approve_manually"],
+                                     callback_data=b"+"),
+                InlineKeyboardButton(group_config["msg_refuse_manually"],
+                                     callback_data=b"-"),
+            ]]
+
+        timeout = group_config["challenge_timeout"]
+        reply_message = await client.send_message(
+            message.chat.id,
+            group_config["msg_challenge"].format(target=target.first_name,
+                                                 target_id=target.id,
+                                                 timeout=timeout,
+                                                 challenge=challenge.qus()),
+            reply_to_message_id=message.message_id,
+            reply_markup=InlineKeyboardMarkup(
+                generate_challenge_button(challenge)),
+        )
+        _me: User = await client.get_me()
+        chat_id = message.chat.id
+        chat_title = message.chat.title
+        target = message.from_user.id
+        timeout_event = Timer(
+            challenge_timeout(client, message.chat.id, message.from_user.id,
+                              reply_message.message_id),
+            timeout=group_config["challenge_timeout"],
+        )
+        _cch_lock.acquire()
+        _current_challenges["{chat}|{msg}".format(
+            chat=message.chat.id,
+            msg=reply_message.message_id)] = (challenge, message.from_user.id,
+                                              timeout_event)
+        _cch_lock.release()
 
     @app.on_callback_query()
     async def challenge_callback(client: Client,
@@ -323,89 +406,6 @@ def _update(app):
                 client.delete_messages(chat_id, msg_id),
                 group_config["delete_passed_challenge_interval"],
             )
-
-    @app.on_message(filters.new_chat_members)
-    async def challenge_user(client: Client, message: Message):
-        target = message.new_chat_members[0]
-        if message.from_user.id != target.id:
-            if target.is_self:
-                group_config = _config.get(str(message.chat.id), _config["*"])
-                try:
-                    await client.send_message(
-                        message.chat.id, group_config["msg_self_introduction"])
-                    _me: User = await client.get_me()
-                    try:
-                        await client.send_message(
-                            int(_channel),
-                            _config["msg_into_group"].format(
-                                botid=str(_me.id),
-                                groupid=str(message.chat.id),
-                                grouptitle=str(message.chat.title),
-                            ),
-                            parse_mode="Markdown",
-                        )
-                    except Exception as e:
-                        logging.error(str(e))
-                except ChannelPrivate:
-                    return
-            return
-        try:
-            await client.restrict_chat_member(
-                chat_id=message.chat.id,
-                user_id=target.id,
-                permissions=ChatPermissions(can_send_stickers=False,
-                                            can_send_messages=False,
-                                            can_send_media_messages=False,
-                                            can_add_web_page_previews=False,
-                                            can_send_polls=False,
-                                            can_send_animations=False))
-        except ChatAdminRequired:
-            return
-        group_config = _config.get(str(message.chat.id), _config["*"])
-        challenge = Challenge()
-
-        def generate_challenge_button(e):
-            choices = []
-            answers = []
-            for c in e.choices():
-                answers.append(
-                    InlineKeyboardButton(str(c),
-                                         callback_data=bytes(
-                                             str(c), encoding="utf-8")))
-            choices.append(answers)
-            return choices + [[
-                InlineKeyboardButton(group_config["msg_approve_manually"],
-                                     callback_data=b"+"),
-                InlineKeyboardButton(group_config["msg_refuse_manually"],
-                                     callback_data=b"-"),
-            ]]
-
-        timeout = group_config["challenge_timeout"]
-        reply_message = await client.send_message(
-            message.chat.id,
-            group_config["msg_challenge"].format(target=target.first_name,
-                                                 target_id=target.id,
-                                                 timeout=timeout,
-                                                 challenge=challenge.qus()),
-            reply_to_message_id=message.message_id,
-            reply_markup=InlineKeyboardMarkup(
-                generate_challenge_button(challenge)),
-        )
-        _me: User = await client.get_me()
-        chat_id = message.chat.id
-        chat_title = message.chat.title
-        target = message.from_user.id
-        timeout_event = Timer(
-            challenge_timeout(client, message.chat.id, message.from_user.id,
-                              reply_message.message_id),
-            timeout=group_config["challenge_timeout"],
-        )
-        _cch_lock.acquire()
-        _current_challenges["{chat}|{msg}".format(
-            chat=message.chat.id,
-            msg=reply_message.message_id)] = (challenge, message.from_user.id,
-                                              timeout_event)
-        _cch_lock.release()
 
     async def challenge_timeout(client: Client, chat_id, from_id, reply_id):
         global _current_challenges
