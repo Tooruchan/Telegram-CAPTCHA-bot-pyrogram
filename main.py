@@ -7,8 +7,9 @@ import logging, subprocess
 from configparser import ConfigParser
 from time import time, sleep
 from challenge import Challenge
-from pyrogram import (Client, Filters, Message, User, InlineKeyboardButton,
-                      InlineKeyboardMarkup, CallbackQuery, ChatPermissions)
+from pyrogram import (Client, filters)
+from pyrogram.types import (InlineQueryResultArticle, InputTextMessageContent,
+                            InlineKeyboardMarkup, InlineKeyboardButton, User, Message, ChatPermissions, CallbackQuery)
 from pyrogram.errors import ChatAdminRequired, ChannelPrivate, ChannelInvalid, MessageNotModified
 from Timer import Timer
 
@@ -20,7 +21,7 @@ _config = dict()
 '''
 读 只 读 配 置
 '''
-cf = ConfigParser() #启用ConfigParser读取那些启动后即不会再被更改的数据，如BotToken等
+cf = ConfigParser()  # 启用ConfigParser读取那些启动后即不会再被更改的数据，如BotToken等
 cf.read("auth.ini")
 _admin_user = cf.getint("bot", "admin")
 _token = cf.get("bot", "token")
@@ -29,6 +30,8 @@ _api_hash = cf.get("bot", "api_hash")
 _admin_user = cf.getint("bot", "admin")
 _channel = cf.getint("bot", "channel")
 logging.basicConfig(level=logging.INFO)
+
+
 # 设置一下日志记录，能够在诸如 systemctl status captchabot 这样的地方获得详细输出。
 
 
@@ -44,7 +47,7 @@ def save_config():
 
 
 def _update(app):
-    @app.on_message(Filters.command("reload") & Filters.private)
+    @app.on_message(filters.command("reload") & filters.private)
     async def reload_cfg(client: Client, message: Message):
         _me: User = await client.get_me()
         logging.info(message.text)
@@ -53,24 +56,25 @@ def _update(app):
             load_config()
             await message.reply("配置已成功重载。")
         else:
-            logging.info("Permission denied, admin user in config is:"+_admin_user)
+            logging.info("Permission denied, admin user in config is:" + _admin_user)
             pass
 
-    @app.on_message(Filters.command("help") & Filters.group)
+    @app.on_message(filters.command("help") & filters.group)
     async def helping_cmd(client: Client, message: Message):
         _me: User = await client.get_me()
         logging.info(message.text)
         await message.reply(_config["*"]["msg_self_introduction"],
                             disable_web_page_preview=True)
-    @app.on_message(Filters.command("ping") & Filters.private)
+
+    @app.on_message(filters.command("ping") & filters.private)
     async def ping_command(client: Client, message: Message):
         await message.reply("poi~")
 
-    @app.on_message(Filters.command("start") & Filters.private)
+    @app.on_message(filters.command("start") & filters.private)
     async def start_command(client: Client, message: Message):
         await message.reply(_start_message)
 
-    @app.on_message(Filters.command("leave") & Filters.private)
+    @app.on_message(filters.command("leave") & filters.private)
     async def leave_command(client: Client, message: Message):
         chat_id = message.text.split()[-1]
         if message.from_user.id == _admin_user:
@@ -112,9 +116,9 @@ def _update(app):
             admins = await client.get_chat_members(chat_id,
                                                    filter="administrators")
             if not any([
-                    admin.user.id == user_id and
+                admin.user.id == user_id and
                 (admin.status == "creator" or admin.can_restrict_members)
-                    for admin in admins
+                for admin in admins
             ]):
                 await client.answer_callback_query(
                     query_id, group_config["msg_permission_denied"])
@@ -123,6 +127,7 @@ def _update(app):
             ch_id = "{chat}|{msg}".format(chat=chat_id, msg=msg_id)
             _cch_lock.acquire()
             # target: int = None
+            timeout_event: None
             challenge, target, timeout_event = _current_challenges.get(
                 ch_id, (None, None, None))
             if ch_id in _current_challenges:
@@ -136,10 +141,9 @@ def _update(app):
                         chat_id,
                         target,
                         permissions=ChatPermissions(
-                            can_send_other_messages=True,
+                            can_send_stickers=True,
                             can_send_messages=True,
                             can_send_media_messages=True,
-                            can_add_web_page_previews=True,
                             can_send_polls=True))
                 except ChatAdminRequired:
                     await client.answer_callback_query(
@@ -210,10 +214,9 @@ def _update(app):
             await client.restrict_chat_member(
                 chat_id,
                 target,
-                permissions=ChatPermissions(can_send_other_messages=True,
+                permissions=ChatPermissions(can_send_stickers=True,
                                             can_send_messages=True,
                                             can_send_media_messages=True,
-                                            can_add_web_page_previews=True,
                                             can_send_polls=True))
         except ChatAdminRequired:
             pass
@@ -321,7 +324,7 @@ def _update(app):
                 group_config["delete_passed_challenge_interval"],
             )
 
-    @app.on_message(Filters.new_chat_members)
+    @app.on_message(filters.new_chat_members)
     async def challenge_user(client: Client, message: Message):
         target = message.new_chat_members[0]
         if message.from_user.id != target.id:
@@ -350,11 +353,12 @@ def _update(app):
             await client.restrict_chat_member(
                 chat_id=message.chat.id,
                 user_id=target.id,
-                permissions=ChatPermissions(can_send_other_messages=False,
+                permissions=ChatPermissions(can_send_stickers=False,
                                             can_send_messages=False,
                                             can_send_media_messages=False,
                                             can_add_web_page_previews=False,
-                                            can_send_polls=False))
+                                            can_send_polls=False,
+                                            can_send_animations=False))
         except ChatAdminRequired:
             return
         group_config = _config.get(str(message.chat.id), _config["*"])
