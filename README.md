@@ -10,7 +10,7 @@ A bot running on Telegram which will send CAPTCHA to verify if the new member is
 
 Remaked and forked based on [Original Repository](https://github.com/lziad/Telegram-CAPTCHA-bot)
 
-修改者：Telegram [@Yoshida_Yuuko](https://t.me/Yoshida_Yuuko) Rsplwe
+修改者：[@Yoshida_Yuuko](https://t.me/Yoshida_Yuuko)（功能开发和轮子适配） Rsplwe（Pyrogram 移植）clatteringmarion（基于 Docker 的虚拟化容器）
 
 Bot实例: [@toorucaptchabot](https://t.me/toorucaptchabot)
 ## 一些简单的Q&A
