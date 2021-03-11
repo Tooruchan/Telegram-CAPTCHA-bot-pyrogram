@@ -24,7 +24,7 @@ main() {
 	check_dep
 	if [[ ! -f auth.ini ]] || [[ ! -f config.json ]]; then
 		echo ""
-		exit(1)
+		exit 1
 	fi
 	git pull
 	/tg-captcha/workdir/venv/bin/python /tg-captcha/workdir/main.py
