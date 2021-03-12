@@ -129,12 +129,7 @@ def _update(app):
             await client.restrict_chat_member(
                 chat_id=message.chat.id,
                 user_id=target.id,
-                permissions=ChatPermissions(can_send_stickers=False,
-                                            can_send_messages=False,
-                                            can_send_media_messages=False,
-                                            can_add_web_page_previews=False,
-                                            can_send_polls=False,
-                                            can_send_animations=False))
+                permissions=ChatPermissions(can_send_messages=False))
         except ChatAdminRequired:
             return
         group_config = _config.get(str(message.chat.id), _config["*"])
@@ -223,10 +218,17 @@ def _update(app):
                         chat_id,
                         target,
                         permissions=ChatPermissions(
-                            can_send_stickers=True,
                             can_send_messages=True,
                             can_send_media_messages=True,
-                            can_send_polls=True))
+                            can_send_stickers=True,
+                            can_send_animations=True,
+                            can_send_games=True,
+                            can_use_inline_bots=True,
+                            can_add_web_page_previews=True,
+                            can_send_polls=True,
+                            can_change_info=True,
+                            can_invite_users=True,
+                            can_pin_messages=True))
                 except ChatAdminRequired:
                     await client.answer_callback_query(
                         query_id, group_config["msg_bot_no_permission"])
@@ -296,10 +298,18 @@ def _update(app):
             await client.restrict_chat_member(
                 chat_id,
                 target,
-                permissions=ChatPermissions(can_send_stickers=True,
-                                            can_send_messages=True,
-                                            can_send_media_messages=True,
-                                            can_send_polls=True))
+                permissions=ChatPermissions(
+                    can_send_messages=True,
+                    can_send_media_messages=True,
+                    can_send_stickers=True,
+                    can_send_animations=True,
+                    can_send_games=True,
+                    can_use_inline_bots=True,
+                    can_add_web_page_previews=True,
+                    can_send_polls=True,
+                    can_change_info=True,
+                    can_invite_users=True,
+                    can_pin_messages=True))
         except ChatAdminRequired:
             pass
 
@@ -385,12 +395,7 @@ def _update(app):
                     await client.restrict_chat_member(
                         chat_id,
                         user_id,
-                        permissions=ChatPermissions(
-                            can_send_other_messages=False,
-                            can_send_messages=False,
-                            can_send_media_messages=False,
-                            can_add_web_page_previews=False,
-                            can_send_polls=False))
+                        permissions=ChatPermissions(can_send_messages=False))
 
                 else:
                     pass
