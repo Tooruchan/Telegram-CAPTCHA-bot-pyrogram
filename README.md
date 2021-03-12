@@ -74,7 +74,7 @@ cd Telegram-CAPTCHA-bot
 5. 下载`auth.ini`文件至服务器， 遵循上栏第四条手动填写  **记住文件存放位置**
 6. 创建Docker container并运行
 
-`sudo docker run -it --name="Container名字" -v $服务器存放auth.ini的地址/auth.ini:/tg-captcha/workdir/auth.ini -v $服务器存放config.json的地址/config.json:/tg-captcha/workdir/config.json tg-captcha`
+`sudo docker run -it --name="Container名字" -v $服务器存放auth.ini的地址/auth.ini:/tg-captcha/workdir/auth.ini -v $服务器存放config.json的地址/config.json:/tg-captcha/workdir/config.json --env tg_captcha_config=true tg-captcha`
 ## 在多个群组（10个以上等）部署本Bot的提示
 
 ~~由于一个已知无解的严重 Bug， Bot 在运行一周至13天左右的时间可能会由于线程冲突导致整个 Bot 死掉，如果需要在多个（10个以上）的群组内部署本 Bot 请考虑在crontab等地方设置定期重启。~~
