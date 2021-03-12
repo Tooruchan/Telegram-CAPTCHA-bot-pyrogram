@@ -10,3 +10,6 @@ __pycache__/
 # Pyrogram data
 *.session
 *.session-journal
+
+# Docker installer lock
+docker-installer.lock
