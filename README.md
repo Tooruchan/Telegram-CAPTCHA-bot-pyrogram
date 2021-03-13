@@ -39,6 +39,7 @@ Bot实例: [@toorucaptchabot](https://t.me/toorucaptchabot)
 Telegram Bot API 使用了基于 MTProto 框架的 pyrogram，多线程使用了 asyncio。
 
 ## 安装与使用
+### 服务器安装
 **由于 Bot 使用了 Python 3.6 的 [变量类型标注](https://docs.python.org/zh-cn/3/library/typing.html) 这一特性，在低于 Python 3.6 的版本上会出现 SyntaxError，因此源码只能在 Python 3.6+ 上运行!**  
 1. 请先向 [@BotFather](https://t.me/botfather) 申请一个 Bot API Token  
 > 你申请到的机器人会在你的 Telegram 账号所在数据中心上运行（即申请机器人的账号A位于 DC 5 (新加坡)，则 A 申请到的机器人也将会在 DC5 上运行)
@@ -54,7 +55,6 @@ cd Telegram-CAPTCHA-bot
 ```
 
 4. 将项目文件夹中 auth.ini 里的 token 字段（与等号间存在一个空格）修改为你在 [@BotFather](https://t.me/botfather) 获取到的 API Token，api_hash 和 api_id 修改为你在步骤2中获得的两串内容，其中 API ID 为数字，而 API Hash 为一组字符，你也可以对 config.json 里的内容酌情修改。
-
 有关填写字段说明:
 
 `channel`: Bot 日志记录频道，未填写将会导致无法正常工作（这是一个 bug，等待修复）。
@@ -65,6 +65,16 @@ cd Telegram-CAPTCHA-bot
 
 6. 将本 bot 加入一个群组，并给予封禁用户的权限，即可开始使用
 
+### Docker使用
+**由于目前Docker脚本不完善， 请遵从服务器安装第四条手动创建`auth.ini`文件共享给Docker**
+1. 同上
+2. 同上
+3. 在服务器安装Docker cli并确定能够运行
+4. 使用Docker拉取镜像 [imintick/tg-captcha](https://hub.docker.com/r/imintick/tg-captcha) `docker pull imintick/tg-captcha`
+5. 下载`auth.ini`文件至服务器， 遵循上栏第四条手动填写  **记住文件存放位置**
+6. 创建Docker container并运行
+
+`sudo docker run -it --name="Container名字" -v $服务器存放auth.ini的地址/auth.ini:/tg-captcha/workdir/auth.ini -v $服务器存放config.json的地址/config.json:/tg-captcha/workdir/config.json --env tg_captcha_config=true tg-captcha`
 ## 在多个群组（10个以上等）部署本Bot的提示
 
 ~~由于一个已知无解的严重 Bug， Bot 在运行一周至13天左右的时间可能会由于线程冲突导致整个 Bot 死掉，如果需要在多个（10个以上）的群组内部署本 Bot 请考虑在crontab等地方设置定期重启。~~
