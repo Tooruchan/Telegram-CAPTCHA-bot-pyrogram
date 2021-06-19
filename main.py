@@ -3,6 +3,7 @@
 import json
 import logging
 import threading
+import time
 from configparser import ConfigParser
 
 from pyrogram import (Client, filters)
@@ -11,6 +12,10 @@ from pyrogram.types import (InlineKeyboardMarkup, InlineKeyboardButton, User, Me
 
 from Timer import Timer
 from challenge import Challenge
+
+from dbhelper import DBHelper
+
+db = DBHelper()
 
 _app: Client = None
 # _challenge_scheduler = sched.scheduler(time, sleep)
@@ -99,13 +104,12 @@ def _update(app):
         else:
             pass
 
-
     @app.on_message(filters.new_chat_members)
     async def challenge_user(client: Client, message: Message):
         target = message.new_chat_members[0]
+        group_config = _config.get(str(message.chat.id), _config["*"])
         if message.from_user.id != target.id:
             if target.is_self:
-                group_config = _config.get(str(message.chat.id), _config["*"])
                 try:
                     await client.send_message(
                         message.chat.id, group_config["msg_self_introduction"])
@@ -132,8 +136,18 @@ def _update(app):
                 permissions=ChatPermissions(can_send_messages=False))
         except ChatAdminRequired:
             return
-        group_config = _config.get(str(message.chat.id), _config["*"])
-        challenge = Challenge()
+
+        chat_id = message.chat.id
+        current_time = time.time()
+        current_time = int(current_time)
+        last_updated = db.get_last_try(target.id)
+        if db.get_user_status(target.id) == 1 and current_time - last_updated > 20:
+            await client.kick_chat_member(chat_id, target.id)
+            await client.unban_chat_member(chat_id, target.id)
+            db.update_last_try(current_time, target.id)
+        else:
+            db.whitelist(target.id)
+            challenge = Challenge()
 
         def generate_challenge_button(e):
             choices = []
@@ -428,11 +442,15 @@ def _update(app):
             text=group_config["msg_challenge_failed"],
             reply_markup=None,
         )
+
         await client.send_message(chat_id=_channel,
                                   text=_config["msg_failed_timeout"].format(
                                       botid=str(_me.id),
                                       targetuser=str(from_id),
                                       groupid=str(chat_id)))
+
+        db.new_blacklist(from_id)
+
         if group_config["challenge_timeout_action"] == "ban":
             await client.kick_chat_member(chat_id, from_id)
         elif group_config["challenge_timeout_action"] == "kick":
@@ -449,6 +467,7 @@ def _update(app):
 
 
 def _main():
+    db.setup()
     global _app, _channel, _start_message, _config
     load_config()
     _start_message = _config["msg_start_message"]
