@@ -10,3 +10,12 @@ __pycache__/
 # Pyrogram data
 *.session
 *.session-journal
+
+#idea
+.idea/
+
+#db
+data.sqlite
+
+#venv
+venv

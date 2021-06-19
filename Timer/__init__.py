@@ -1,6 +1,7 @@
 import asyncio
 import logging
 
+
 class Timer:
     def __init__(self, callback, timeout):
         logging.info("Created a schedule interval as " + str(timeout) + " seconds.")
