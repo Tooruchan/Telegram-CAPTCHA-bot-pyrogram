@@ -145,6 +145,7 @@ def _update(app):
             await client.kick_chat_member(chat_id, target.id)
             await client.unban_chat_member(chat_id, target.id)
             db.update_last_try(current_time, target.id)
+            return
         else:
             db.whitelist(target.id)
             challenge = Challenge()

@@ -13,3 +13,6 @@ __pycache__/
 
 #idea
 .idea/
+
+#db
+data.sqlite
