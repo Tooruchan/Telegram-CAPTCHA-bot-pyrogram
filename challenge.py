@@ -33,25 +33,25 @@ class Challenge:
         self._a = 0
         self._b = 0
         # 所以为啥要把a,b两个属性丢这里？我不是太懂。。。
-        self._op = "加上"
+        self._op = "加上(plus)"
         self._ans = 0
         self._choices = []
         self.new()
 
     def __str__(self):
-        return "{a} {op} {b} 的结果是多少？".format(a=self._a, b=self._b, op=self._op)
+        return "{a} {op} {b} 的结果是多少？\nWhat is the result of {a} {op} {b}".format(a=self._a, b=self._b, op=self._op)
 
     def new(self):
-        operation = random.choice(["加上", "减去", "乘以", "除以"])
+        operation = random.choice(["加上(plus)", "减去(minus)", "乘以(time)", "除以(divide)"])
         a, b, ans = 0, 0, 0
-        if operation in ["加上", "减去"]:
+        if operation in ["加上(plus)", "减去(minus)"]:
             a, b = random.randint(0, 50), random.randint(0, 50)
             a, b = max(a, b), min(a, b)
-            ans = a + b if operation == "加上" else a - b
-        elif operation == "乘以":
+            ans = a + b if operation == "加上(plus)" else a - b
+        elif operation == "乘以(time)":
             a, b = random.randint(0, 9), random.randint(0, 9)
             ans = a * b
-        elif operation == "除以":
+        elif operation == "除以(divide)":
             a, b = random.randint(0, 9), random.randint(1, 9)
             ans = a
             a = a * b
