@@ -449,12 +449,6 @@ def _update(app):
                                       botid=str(_me.id),
                                       targetuser=str(from_id),
                                       groupid=str(chat_id)))
-        if group_config["global_timeout_user_kick"]:
-            try:
-                current_time = int(time.time())
-                db.new_blacklist(current_time, from_id)
-            except:
-                print("Write to database failed")
 
         if group_config["challenge_timeout_action"] == "ban":
             await client.kick_chat_member(chat_id, from_id)
@@ -469,6 +463,13 @@ def _update(app):
                 client.delete_messages(chat_id, reply_id),
                 group_config["delete_failed_challenge_interval"],
             )
+
+        if group_config["global_timeout_user_kick"]:
+            try:
+                current_time = int(time.time())
+                db.new_blacklist(current_time, from_id)
+            except:
+                print("Write to database failed")
 
 
 def _main():
