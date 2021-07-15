@@ -108,6 +108,18 @@ def _update(app):
     async def challenge_user(client: Client, message: Message):
         target = message.new_chat_members[0]
         group_config = _config.get(str(message.chat.id), _config["*"])
+        if group_config["global_timeout_user_kick"]:
+            chat_id = message.chat.id
+            current_time = int(time.time())
+            last_try = db.get_last_try(target.id)
+            if db.get_user_status(target.id) == 1 and (current_time - last_try) > group_config["global_timeout_user_blacklist_remove"]:
+                await client.kick_chat_member(chat_id, target.id)
+                await client.unban_chat_member(chat_id, target.id)
+                db.update_last_try(current_time, target.id)
+                db.try_count_plus_one(target.id)
+                return
+            else:
+                db.whitelist(target.id)
         if message.from_user.id != target.id:
             if target.is_self:
                 try:
@@ -136,19 +148,7 @@ def _update(app):
                 permissions=ChatPermissions(can_send_messages=False))
         except ChatAdminRequired:
             return
-
-        chat_id = message.chat.id
-        current_time = time.time()
-        current_time = int(current_time)
-        last_updated = db.get_last_try(target.id)
-        if db.get_user_status(target.id) == 1 and current_time - last_updated > 20:
-            await client.kick_chat_member(chat_id, target.id)
-            await client.unban_chat_member(chat_id, target.id)
-            db.update_last_try(current_time, target.id)
-            return
-        else:
-            db.whitelist(target.id)
-            challenge = Challenge()
+        challenge = Challenge()
 
         def generate_challenge_button(e):
             choices = []
@@ -449,8 +449,12 @@ def _update(app):
                                       botid=str(_me.id),
                                       targetuser=str(from_id),
                                       groupid=str(chat_id)))
-
-        db.new_blacklist(from_id)
+        if group_config["global_timeout_user_kick"]:
+            try:
+                current_time = int(time.time())
+                db.new_blacklist(current_time, from_id)
+            except:
+                print("Write to database failed")
 
         if group_config["challenge_timeout_action"] == "ban":
             await client.kick_chat_member(chat_id, from_id)

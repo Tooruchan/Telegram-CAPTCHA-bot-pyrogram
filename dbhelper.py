@@ -8,9 +8,10 @@ class DBHelper:
 
     def setup(self):
         stmt = ('''CREATE TABLE IF NOT EXISTS user
-       (user_id INT PRIMARY KEY     NOT NULL,
-        last_try INT    NULL,
-        blacklist  INT     NOT NULL);''')
+       (user_id int PRIMARY KEY     NOT NULL,
+        last_try int default 0,
+        blacklist  int  default 1 NOT NULL,
+        try_count int default 0);''')
         self.conn.execute(stmt)
         self.conn.commit()
 
@@ -34,24 +35,21 @@ class DBHelper:
         else:
             return result[0]
 
-
     def update_last_try(self, time, user_id):
         stmt = "UPDATE user SET last_try = (?) WHERE user_id == (?)"
         cur = self.conn.cursor()
-        args = (time, user_id)
-        cur.execute(stmt, args)
+        cur.execute(stmt, (time, user_id,))
         self.conn.commit()
 
-    def new_blacklist(self, user_id):
-        stmt = "INSERT OR REPLACE INTO user (user_id, blacklist, last_try) VALUES (?,?,?)"
-        args = (user_id, 1, 0)
-        self.conn.execute(stmt, args)
+    def try_count_plus_one(self, user_id):
+        stmt = "UPDATE user SET try_count = try_count + 1 WHERE user_id == (?)"
+        cur = self.conn.cursor()
+        cur.execute(stmt, (user_id,))
         self.conn.commit()
 
-    def new_whitelist(self, user_id):
-        stmt = "INSERT OR REPLACE INTO user (user_id, blacklist, last_try) VALUES (?,?,?)"
-        args = (user_id, 0, 0)
-        self.conn.execute(stmt, args)
+    def new_blacklist(self, time, user_id):
+        stmt = "INSERT OR REPLACE INTO user (last_try, user_id) VALUES (?,?)"
+        self.conn.execute(stmt, (time, user_id,))
         self.conn.commit()
 
     def blacklist(self, user_id):

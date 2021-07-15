@@ -16,3 +16,6 @@ __pycache__/
 
 #db
 data.sqlite
+
+#venv
+venv
