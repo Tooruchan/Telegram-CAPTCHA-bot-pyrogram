@@ -42,9 +42,9 @@ class Challenge:
         return "{a} {op} {b} 的结果是多少？".format(a=self._a, b=self._b, op=self._op)
 
     def new(self):
-        operation = random.choice(["加上", "减去", "乘以", "除以"])
+        operation = random.choice(["加上", "减掉", "乘以", "除以"])
         a, b, ans = 0, 0, 0
-        if operation in ["加上", "减去"]:
+        if operation in ["加上", "减掉"]:
             a, b = random.randint(0, 50), random.randint(0, 50)
             a, b = max(a, b), min(a, b)
             ans = a + b if operation == "加上" else a - b
@@ -56,7 +56,7 @@ class Challenge:
             ans = a
             a = a * b
 
-        cases = random.randint(3, 5)
+        cases = random.randint(3, 4)
         choices = random.sample(range(100), cases)
         if ans not in choices:
             choices[0] = ans
