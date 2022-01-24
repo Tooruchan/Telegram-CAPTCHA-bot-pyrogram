@@ -507,7 +507,9 @@ def _update(app):
                         logging.error(str(e))
                 except ChatAdminRequired:
                     return
+                print("Attempt to break.")
                 if group_config["challenge_timeout_action"] == "ban":
+                    
                     await client.ban_chat_member(chat_id, user_id)
                 elif group_config["challenge_timeout_action"] == "kick":
                     await client.ban_chat_member(chat_id, user_id)
@@ -523,12 +525,12 @@ def _update(app):
 
                 if group_config["delete_failed_challenge"]:
                     Timer(
-                        client.delete_messages(chat_id, msg_id),
+                        await client.delete_messages(chat_id, msg_id),
                         group_config["delete_failed_challenge_interval"],
                     )
         if group_config["delete_passed_challenge"]:
             Timer(
-                client.delete_messages(chat_id, msg_id),
+                await client.delete_messages(chat_id, msg_id),
                 group_config["delete_passed_challenge_interval"],
             )
 
@@ -557,9 +559,8 @@ def _update(app):
                                         groupid=str(chat_id)))
         except Exception as e:
             pass
-        print("Attempt to break.")
         if group_config["challenge_timeout_action"] == "ban":
-            await client.ban_chat_member(chat_id, from_id)
+            await client.ban_chat_member(chat_id, from_id, int(time.time() + 5))
         elif group_config["challenge_timeout_action"] == "kick":
             await client.ban_chat_member(chat_id, from_id)
             await client.unban_chat_member(chat_id, from_id)
@@ -568,7 +569,7 @@ def _update(app):
 
         if group_config["delete_failed_challenge"]:
             Timer(
-                client.delete_messages(chat_id, reply_id),
+                await client.delete_messages(chat_id, reply_id),
                 group_config["delete_failed_challenge_interval"],
             )
 
