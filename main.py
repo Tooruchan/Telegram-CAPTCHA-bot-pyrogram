@@ -507,13 +507,11 @@ def _update(app):
                         logging.error(str(e))
                 except ChatAdminRequired:
                     return
-                print("Attempt to break.")
                 if group_config["challenge_timeout_action"] == "ban":
-                    
                     await client.ban_chat_member(chat_id, user_id)
                 elif group_config["challenge_timeout_action"] == "kick":
                     await client.ban_chat_member(chat_id, user_id)
-                    await client.ban_chat_member(chat_id, user_id)
+                    await client.unban_chat_member(chat_id, user_id)
                 elif group_config["challenge_timeout_action"] == "mute":
                     await client.restrict_chat_member(
                         chat_id,
@@ -561,7 +559,7 @@ def _update(app):
             pass
         print("Attempt to break.")
         if group_config["challenge_timeout_action"] == "ban":
-            await client.ban_chat_member(chat_id, from_id, int(time.time() + 5))
+            await client.ban_chat_member(chat_id, from_id)
         elif group_config["challenge_timeout_action"] == "kick":
             await client.ban_chat_member(chat_id, from_id)
             await client.unban_chat_member(chat_id, from_id)
