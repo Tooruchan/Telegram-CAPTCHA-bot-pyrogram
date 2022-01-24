@@ -205,11 +205,6 @@ def _update(app):
         me: User = await client.get_me()
         # 机器人自身
         group_config = _config.get(str(message.chat.id), _config["*"])
-        if chat.id not in _whitelist:
-            await client.send_message(message.chat.id,
-                                      "群组 `{groupid}` 当前未处于白名单中，请联系本项目管理员申请。".format(groupid=str(chat.id)))
-            # await client.leave_chat(message.chat.id)
-            return
         if chat.id in _blacklist:
             await client.send_message(message.chat.id,
                                       "很抱歉，由于违反防滥用规则，这个机器人无法对这个群组提供服务。")
@@ -436,15 +431,10 @@ def _update(app):
                 permissions=ChatPermissions(
                     can_send_messages=True,
                     can_send_media_messages=True,
-                    can_send_stickers=True,
-                    can_send_animations=True,
-                    can_send_games=True,
-                    can_use_inline_bots=True,
+                    can_send_other_messages=True,
                     can_add_web_page_previews=True,
-                    can_send_polls=True,
-                    can_change_info=True,
-                    can_invite_users=True,
-                    can_pin_messages=True))
+                    can_send_polls=True
+                ))
         except ChatAdminRequired:
             pass
 
