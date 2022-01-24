@@ -411,6 +411,12 @@ def _update(app):
                     )
                 except Exception as e:
                     logging.error(str(e))
+                if group_config["delete_passed_challenge"]:
+                    print("Attempt!")
+                    Timer(
+                        client.delete_messages(chat_id, msg_id),
+                        group_config["delete_passed_challenge_interval"],
+                    )
             else:
                 try:
                     await client.ban_chat_member(chat_id, target, int(time.time() + 30))
@@ -440,6 +446,11 @@ def _update(app):
                 except Exception as e:
                     logging.error(str(e))
             await client.answer_callback_query(query_id)
+            if group_config["delete_failed_challenge"]:
+                Timer(
+                    client.delete_messages(chat_id, msg_id),
+                    group_config["delete_failed_challenge_interval"],
+                )
             return
 
         ch_id = "{chat}|{msg}".format(chat=chat_id, msg=msg_id)
@@ -557,15 +568,16 @@ def _update(app):
 
                 else:
                     pass
-
                 if group_config["delete_failed_challenge"]:
                     Timer(
-                        await client.delete_messages(chat_id, msg_id),
+                        client.delete_messages(chat_id, msg_id),
                         group_config["delete_failed_challenge_interval"],
                     )
+        print("test!")
         if group_config["delete_passed_challenge"]:
+            print("Attempt!")
             Timer(
-                await client.delete_messages(chat_id, msg_id),
+                client.delete_messages(chat_id, msg_id),
                 group_config["delete_passed_challenge_interval"],
             )
 
@@ -603,7 +615,7 @@ def _update(app):
 
         if group_config["delete_failed_challenge"]:
             Timer(
-                await client.delete_messages(chat_id, reply_id),
+                client.delete_messages(chat_id, reply_id),
                 group_config["delete_failed_challenge_interval"],
             )
 
