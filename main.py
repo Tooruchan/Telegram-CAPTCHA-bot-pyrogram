@@ -1,6 +1,7 @@
 # !/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 import json
+import time
 import logging
 import threading
 from configparser import ConfigParser
@@ -382,7 +383,7 @@ def _update(app):
                     logging.error(str(e))
             else:
                 try:
-                    await client.kick_chat_member(chat_id, target)
+                    await client.ban_chat_member(chat_id, target,int(time.time() + 30))
                 except ChatAdminRequired:
                     await client.answer_callback_query(
                         query_id, group_config["msg_bot_no_permission"])
@@ -506,12 +507,13 @@ def _update(app):
                         logging.error(str(e))
                 except ChatAdminRequired:
                     return
-
+                print("Attempt to break.")
                 if group_config["challenge_timeout_action"] == "ban":
-                    await client.kick_chat_member(chat_id, user_id)
+                    
+                    await client.ban_chat_member(chat_id, user_id)
                 elif group_config["challenge_timeout_action"] == "kick":
-                    await client.kick_chat_member(chat_id, user_id)
-                    await client.unban_chat_member(chat_id, user_id)
+                    await client.ban_chat_member(chat_id, user_id)
+                    await client.ban_chat_member(chat_id, user_id)
                 elif group_config["challenge_timeout_action"] == "mute":
                     await client.restrict_chat_member(
                         chat_id,
@@ -549,15 +551,19 @@ def _update(app):
             text=group_config["msg_challenge_failed"],
             reply_markup=None,
         )
-        await client.send_message(chat_id=_channel,
-                                  text=_config["msg_failed_timeout"].format(
-                                      botid=str(_me.id),
-                                      targetuser=str(from_id),
-                                      groupid=str(chat_id)))
+        try:
+            await client.send_message(chat_id=_channel,
+                                    text=_config["msg_failed_timeout"].format(
+                                        botid=str(_me.id),
+                                        targetuser=str(from_id),
+                                        groupid=str(chat_id)))
+        except Exception as e:
+            pass
+        print("Attempt to break.")
         if group_config["challenge_timeout_action"] == "ban":
-            await client.kick_chat_member(chat_id, from_id)
+            await client.ban_chat_member(chat_id, from_id, int(time.time() + 5))
         elif group_config["challenge_timeout_action"] == "kick":
-            await client.kick_chat_member(chat_id, from_id)
+            await client.ban_chat_member(chat_id, from_id)
             await client.unban_chat_member(chat_id, from_id)
         else:
             pass
