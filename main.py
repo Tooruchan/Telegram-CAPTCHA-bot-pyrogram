@@ -203,15 +203,14 @@ def _update(app):
             pass
 
     # 这是用于检测加群用户的事件
-    @app.on_chat_member_updated()
-    async def challenge_user(client: Client, message: ChatMemberUpdated):
+    @app.on_message(filters.new_chat_members)
+    async def challenge_user(client: Client, message: Message):
         global _blacklist, _groups, _whitelist
-        # 过滤掉非用户加群消息和频道新用户消息，同时确保 form_user 这个参数不是空的
-        if not bool(message.new_chat_member) or bool(message.old_chat_member) or message.chat.type == "channel":
-            return
-        # 过滤掉管理员 ban 掉用户产生的加群消息 (Durov 这什么 jb api 赶紧分遗产了)
-        if message.from_user.id != message.new_chat_member.user.id:
-            return
+        # 即将废弃，这是用 Telegram 的内置服务消息作为检测新入群用户的方式
+        # 它的缺点是，服务消息在一开始为非公开的超级群组和超过10K用户的超级群组
+        # 是不会弹出的，因此 Telegram API 又提出了一个新的方法 ChatMemberUpdated
+        # Pyrogram 1.2.0 对这些新方法提供了修饰器的支持
+        # 详阅 https://docs.pyrogram.org/api/decorators#pyrogram.Client.on_chat_member_updated
         target = message.new_chat_members[0]
         # 新加入群的用户
         chat = message.chat
