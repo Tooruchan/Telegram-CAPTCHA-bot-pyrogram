@@ -61,15 +61,9 @@ cd Telegram-CAPTCHA-bot
 
 `admin`: 管理用户，不填写则`/leave`和`/reload`指令无效。
 
-5. 使用 `python3 main.py` 直接运行这个 bot,或者在 `/etc/systemd/system/ `下新建一个 .service 文件，使用 systemd 控制这个bot的运行，配置文件示例请参考本项目目录下的 `example.service` 文件进行修改。
+5. 使用 `python3 main.py` 直接运行这个 bot,或者在 `/etc/systemd/system/ `下新建一个 .service 文件，使用 systemd 控制这个 bot 的运行，配置文件示例请参考本项目目录下的 `example.service` 文件进行修改。
 
-6. 将本 bot 加入一个群组，并给予封禁用户的权限，即可开始使用
-
-## 在多个群组（10个以上等）部署本Bot的提示
-
-~~由于一个已知无解的严重 Bug， Bot 在运行一周至13天左右的时间可能会由于线程冲突导致整个 Bot 死掉，如果需要在多个（10个以上）的群组内部署本 Bot 请考虑在crontab等地方设置定期重启。~~
-
-现在的分支加入了一遇到异常就会自动重启的设定，Bot 在正常运行情况下应该是不会卡死了。
+6. 将本机器人加入一个群组，并给予封禁用户的权限，即可开始使用
 
 ## 日志
 在安装了 systemd ，且已经在 /etc/systemd/system 下部署了服务的 Linux 操作系统环境下，请使用命令：
@@ -81,15 +75,7 @@ journalctl -u captchabot.service
 ## 项目实例
 [@toorucaptchabot](https://t.me/toorucaptchabot)
 
-本项目在 PyPy 3.6 和 pyrogram v0.16.0.asyncio 上测试通过  
-
-[@AffyunWatchCatBot](https://t.me/AffyunWatchCatBot)
-
-(环境为 Python 3.7.3 和 pyrogram v0.12.0.asyncio)
-
-[@JustCaptchaBot](https://t.me/JustCaptchaBot)
-
-(环境为 PyPy 3.6 + pyrogram v0.13.0.asyncio)
+本项目在 PyPy 3.6 和 pyrogram v1.3.6 上测试通过  
 
 ## 开源协议
 本项目使用 GNU Affero 通用公共许可证 3.0 开源
