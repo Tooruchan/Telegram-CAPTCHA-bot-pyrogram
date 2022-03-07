@@ -13,6 +13,8 @@ Remaked and forked based on [Original Repository](https://github.com/lziad/Teleg
 修改者：[@Yoshida_Yuuko](https://t.me/Yoshida_Yuuko)（功能开发和轮子适配） Rsplwe（Pyrogram 移植）clatteringmarion（基于 Docker 的虚拟化容器）
 
 Bot实例: [@toorucaptchabot](https://t.me/toorucaptchabot)
+
+[隐私协议](https://github.com/Tooruchan/Telegram-CAPTCHA-bot-pyrogram/blob/master/PRIVACY.md) | [用户须知](https://github.com/Tooruchan/Telegram-CAPTCHA-bot-pyrogram/blob/master/ToS.md)
 ## 一些简单的Q&A
 
 **Q:** 请问这个Bot是否会窃听群组消息？
