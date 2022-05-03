@@ -5,8 +5,9 @@ import time
 import logging
 import threading
 from configparser import ConfigParser
+import asyncio
 
-from pyrogram import Client, filters
+from pyrogram import Client, filters, enums, __version__
 from pyrogram.errors import (
     ChatAdminRequired,
     ChannelPrivate,
@@ -148,7 +149,7 @@ def _update(app):
             return
         else:
             wl = "\n".join([str(x) for x in _blacklist])
-            await message.reply("当前已加入配置文件中的白名单有: \n{}".format(str(wl)))
+            await message.reply("当前已加入配置文件中的黑名单有: \n{}".format(str(wl)))
 
     @app.on_message(filters.command("reload") & filters.private)
     async def reload_cfg(client: Client, message: Message):
@@ -220,7 +221,7 @@ def _update(app):
         group_config = _config.get(str(message.chat.id), _config["*"])
         if chat.id in _blacklist:
             await client.send_message(
-                message.chat.id, "很抱歉，由于违反防滥用规则，这个机器人无法对这个群组提供服务。"
+                message.chat.id, "很抱歉，由于违反防滥用规则，这个群组已经被加入本运行实例的黑名单中，这个机器人无法对这个群组提供服务。"
             )
             await client.leave_chat(message.chat.id)
             return
@@ -322,7 +323,7 @@ def _update(app):
                 client,
                 message.chat.id,
                 message.from_user.id,
-                challenge_message.message_id,
+                challenge_message.id,
             ),
             timeout=timeout,
         )
@@ -331,7 +332,7 @@ def _update(app):
         _cch_lock.acquire()
         _current_challenges[
             "{chat}|{msg}".format(
-                chat=message.chat.id, msg=challenge_message.message_id
+                chat=message.chat.id, msg=challenge_message.id
             )
         ] = (challenge, message.from_user.id, timeout_event)
         _cch_lock.release()
@@ -342,16 +343,18 @@ def _update(app):
         query_id = callback_query.id
         chat_id = callback_query.message.chat.id
         user_id = callback_query.from_user.id
-        msg_id = callback_query.message.message_id
+        msg_id = callback_query.message.id
         chat_title = callback_query.message.chat.title
         user_name = callback_query.from_user.first_name
         group_config = _config.get(str(chat_id), _config["*"])
         if query_data in ["+", "-"]:
-            admins = await client.get_chat_members(chat_id, filter="administrators")
+            admins = []
+            async for m in app.get_chat_members(chat_id, filter=enums.ChatMembersFilter.ADMINISTRATORS):
+                admins.append(m)
             if not any(
                 [
                     admin.user.id == user_id
-                    and (admin.status == "creator" or admin.can_restrict_members)
+                    and (admin.status == "OWNER" or admin.privileges.can_restrict_members)
                     for admin in admins
                 ]
             ):
@@ -412,7 +415,6 @@ def _update(app):
                 except Exception as e:
                     logging.error(str(e))
                 if group_config["delete_passed_challenge"]:
-                    print("Attempt!")
                     Timer(
                         client.delete_messages(chat_id, msg_id),
                         group_config["delete_passed_challenge_interval"],
@@ -554,7 +556,6 @@ def _update(app):
                         logging.error(str(e))
                 except ChatAdminRequired:
                     return
-                print("Attempt to break.")
                 if group_config["challenge_timeout_action"] == "ban":
                     await client.ban_chat_member(chat_id, user_id)
                 elif group_config["challenge_timeout_action"] == "kick":
@@ -623,7 +624,7 @@ def _update(app):
 def _main():
     global _app, _channel, _start_message, _config, _blacklist, _groups, _whitelist
     load_config()
-    _start_message = _config["msg_start_message"]
+    _start_message = _config["msg_start_message"].format(__version__)
     _proxy_ip = _config["proxy_addr"].strip()
     _proxy_port = _config["proxy_port"].strip()
     _blacklist = _config["blacklist"]
@@ -635,7 +636,7 @@ def _main():
             bot_token=_token,
             api_id=_api_id,
             api_hash=_api_hash,
-            proxy=dict(hostname=_proxy_ip, port=int(_proxy_port)),
+            proxy=dict(scheme="socks5", hostname=_proxy_ip, port=int(_proxy_port)),
         )
     else:
         _app = Client("bot", bot_token=_token, api_id=_api_id, api_hash=_api_hash)
@@ -645,8 +646,7 @@ def _main():
     except KeyboardInterrupt:
         quit()
     except Exception as e:
-        logging.error(e)
-        _main()
+        raise
 
 
 if __name__ == "__main__":

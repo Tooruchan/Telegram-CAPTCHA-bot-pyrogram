@@ -2,10 +2,10 @@
     "proxy_addr": "",
     "proxy_port": "",
     "blacklist": [],
-    "whitelist":[],
-    "groups": [
+    "whitelist": [
     ],
-    "msg_start_message": "喵？",
+    "groups": [],
+    "msg_start_message": "托尔的数学题验证机器人\nDX 2022 ver.CH-1.20\n最后更新时间：2022-05-03\nPowered by Pyrogram v{}",
     "msg_passed_answer": "#PASS\nOPBot: `{botid}`\n用户 ID: `{targetuser}` \n事件: 通过验证.\n群组 ID: `{groupid}`\n群组标题: `{grouptitle}`",
     "msg_passed_mercy": "#PASS_WRONG_ANSWER\nOPBot: `{botid}`\n用户 ID: `{targetuser}` \n事件: 回答错误，通过验证.\n群组 ID: `{groupid}`\n群组标题: `{grouptitle}`",
     "msg_passed_admin": "#PASS_MANUALLY\nOPBot: `{botid}`\n用户 ID: `{targetuser}` \n事件: 管理员人工通过验证.\n群组 ID: `{groupid}`\n群组标题: `{grouptitle}`",
@@ -15,7 +15,7 @@
     "msg_into_group": "#ADDBOT\nOPBot: `{botid}`\n已被加入群组 ID: `{groupid}`\n群组标题: `{grouptitle}` 中",
     "msg_leave_group": "基于Term of Service, OPBot: `{botid}` \n离开了群组: `{groupid}`",
     "msg_leave_msg": "根据 Term of Service,本 Bot 无法对该群组提供服务,需要了解更多,请查看项目使用协议。",
-    "msg_self_introduction": "Tooruchan's Captcha Bot DX 2021 Ver CH-1.10A\n请赋予本机器人“封禁用户”的权限以使其能够正常工作。\nSponsor by [DOGESS](https://dogess.app/auth/register?code=iQG7)\n[YToo](https://ytoo.co.uk/aff.php?aff=75)\n[WiKiHosts](https://idc.wiki/aff.php?aff=1972)\nPowered by [Kobayashi Tooruchan](https://github.com/Tooruchan)\n[Project Repo](https://github.com/Tooruchan/Telegram-CAPTCHA-Bot-pyrogram)\nFramework:\n[pyrogram](https://github.com/pyrogram/pyrogram)",
+    "msg_self_introduction": "Tooruchan's Captcha Bot DX 2022 Ver CH-1.20\n请赋予本机器人“封禁用户”的权限以使其能够正常工作。\nSponsor by [DOGESS](https://dogess.app/auth/register?code=iQG7)\n[YToo](https://ytoo.co.uk/aff.php?aff=75)\n[WiKiHosts](https://idc.wiki/aff.php?aff=1972)\nPowered by [Kobayashi Tooruchan](https://github.com/Tooruchan)\n[Project Repo](https://github.com/Tooruchan/Telegram-CAPTCHA-Bot-pyrogram)\nFramework:\n[pyrogram](https://github.com/pyrogram/pyrogram)",
     "*": {
         "msg_challenge_not_for_you": "这次验证并不针对您",
         "msg_challenge": "对于用户 [{target}](tg://user?id={target_id}) :\n您好，本群开启了验证功能，请在 {timeout} 秒内点击下面的按钮回答这个问题：\n{challenge}",
