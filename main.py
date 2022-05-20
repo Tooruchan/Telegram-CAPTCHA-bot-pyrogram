@@ -6,6 +6,7 @@ import logging
 import threading
 from configparser import ConfigParser
 import asyncio
+from datetime import datetime,timedelta
 
 from pyrogram import Client, filters, enums, __version__
 from pyrogram.errors import (
@@ -559,7 +560,7 @@ def _update(app):
                 if group_config["challenge_timeout_action"] == "ban":
                     await client.ban_chat_member(chat_id, user_id)
                 elif group_config["challenge_timeout_action"] == "kick":
-                    await client.ban_chat_member(chat_id, user_id, int(time.time() + 5))
+                    await client.ban_chat_member(chat_id, user_id, datetime.now()+timedelta(seconds=30))
                 elif group_config["challenge_timeout_action"] == "mute":
                     await client.restrict_chat_member(
                         chat_id,
